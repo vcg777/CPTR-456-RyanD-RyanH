@@ -4,6 +4,7 @@ import MainArea from "./components/MainArea"
 import NameDisplay from "./components/NameDisplay"
 import ReactorDisplay from "./components/ReactorDisplay"
 import TempDisplay from "./components/TempDisplay"
+// import standIn from "./images/stand-in.jpg"
 
 function App() {
 

@@ -1,7 +1,12 @@
+import standIn from "../images/stand-in.jpg"
+
 const ReactorDisplay = (props) => {
+    const { image } = props
     return (
         <>
-            <h1>Reactor</h1>
+            <button>
+                <img src={standIn} />
+            </button>
         </>
     )
 }

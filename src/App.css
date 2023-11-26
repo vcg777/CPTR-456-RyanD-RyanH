@@ -1,9 +1,18 @@
-#root,
+html,
 body {
-  /* max-width: 1280px; */
   margin: 0;
   padding: 0;
-  /* text-align: center; */
+}
+
+#root {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  --white: #fefffe;
+  --red: #ff6663;
+  --light-blue: #bfd7ea;
+  --navy: #0b3954;
+  --yellow: #e0ff4f;
 }
 
 main {
@@ -15,8 +24,20 @@ main {
   align-items: center;
 }
 
+img {
+  width: 25vw;
+  height: 33.3333333333333333333333333333333333vh;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
 div {
   display: flex;
+  height: 33.3333333333333333333333333333333333vh;
 }
 
 .first,
@@ -40,10 +61,6 @@ div {
 .names {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   width: 33vw;
-}
-
-h1 {
-  border: 1px solid black;
-  margin: 0;
 }
