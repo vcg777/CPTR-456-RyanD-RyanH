@@ -10,9 +10,15 @@ body {
   text-align: center;
   --white: #fefffe;
   --red: #ff6663;
+  /* --red-hover: #ff3531; */
   --light-blue: #bfd7ea;
+  /* --light-blue-hover: #3b95de; */
   --navy: #0b3954;
+  /* --navy-hover: #16567b; */
   --yellow: #e0ff4f;
+  /* --yellow-hover: #fffb00; */
+  --black: #1b1212;
+  /* --black-hover: #2d2d2d; */
 }
 
 main {
@@ -24,33 +30,43 @@ main {
   align-items: center;
 }
 
-img {
-  width: 25vw;
-  height: 33.3333333333333333333333333333333333vh;
-}
-
 button {
   cursor: pointer;
   background: none;
   border: none;
+  padding: 0;
 }
 
-div {
+/* Home Page */
+
+.main-page {
   display: flex;
   height: 33.3333333333333333333333333333333333vh;
 }
 
-.first,
-.third {
+.top-row,
+.bottom-row {
+  display: flex;
   width: 100vw;
 }
 
-.first h1,
-.third h1 {
-  width: 25vw;
+.main-page img {
+  width: 33vw;
+  height: 33.3333333333333333333333333333333333vh;
 }
 
-.second {
+.temp-display {
+  display: flex;
+  width: 17vw;
+  gap: 60px;
+  flex-direction: column;
+}
+
+.temp-display:nth-child(even) {
+  border-right: 1px solid var(--white);
+}
+
+.middle-row {
   width: 100vw;
 }
 
@@ -61,6 +77,25 @@ div {
 .names {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 5vh;
+  justify-content: center;
   width: 33vw;
+}
+
+.h-line {
+  background-color: var(--white);
+  height: 1px;
+  width: 100%;
+}
+
+.totals-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 13vh;
+}
+
+.main-buttons {
+  display: flex;
+  gap: 1.5vh;
 }

@@ -1,10 +1,10 @@
 import standIn from "../images/stand-in.jpg"
 
 const ReactorDisplay = (props) => {
-    const { image } = props
+    const { handleOpen } = props
     return (
         <>
-            <button>
+            <button onClick={handleOpen}>
                 <img src={standIn} />
             </button>
         </>

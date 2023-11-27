@@ -1,7 +1,15 @@
+import { Typography } from "@mui/material"
+
 const NameDisplay = (props) => {
+    const { currentName } = props
+
     return (
         <>
-            <h1>Name</h1>
+            <Typography
+                variant="h4"
+            >
+                Name
+            </Typography>
         </>
     )
 }
