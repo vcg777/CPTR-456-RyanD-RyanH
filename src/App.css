@@ -99,3 +99,44 @@ button {
   display: flex;
   gap: 1.5vh;
 }
+
+/* Reactor Page */
+
+.reactor-page {
+  display: flex;
+  width: 70vw;
+}
+
+.reactor-top {
+  height: 40vh;
+}
+
+.canvas-understudy {
+  background-color: orange;
+  margin-top: 47px;
+  width: 30vw;
+  height: 25vh;
+}
+
+.output-words {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reactor-bottom {
+  height: 60vh;
+}
+
+.control-buttons {
+  display: flex;
+  width: 35vw;
+  justify-content: space-evenly;
+}
+
+.temp-data,
+.rods-data {
+  display: flex;
+  width: 35vw;
+  justify-content: space-evenly;
+}
