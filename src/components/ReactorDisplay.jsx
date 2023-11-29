@@ -1,10 +1,12 @@
+import { useNavigate } from "react-router-dom"
 import standIn from "../images/stand-in.jpg"
 
 const ReactorDisplay = (props) => {
-    const { handleOpen } = props
+    const { id } = props
     return (
         <>
-            <button onClick={handleOpen}>
+            {/* onClick={useNavigate(`/${id}`)} */}
+            <button>
                 <img src={standIn} />
             </button>
         </>

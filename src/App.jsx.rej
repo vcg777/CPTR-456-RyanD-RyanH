@@ -1,0 +1,29 @@
+diff a/src/App.jsx b/src/App.jsx	(rejected hunks)
+@@ -12,14 +12,24 @@
+   const [reactors, setReactors] = useState([])
+   const [plantName, setPlantName] = useState("")
+   const [idsArray, setIdsArray] = useState([])
++  const [logs, setLogs] = useState([])
++
+ 
+   useEffect(() => {
+     const getReactors = async () => {
+-      const rawData = await fetch(`https://nuclear.dacoder.io/reactors?apiKey=${apiKey}`)
+-      const jsonData = await rawData.json()
+-      setReactors(jsonData.reactors)
++      const reactorRaw = await fetch(`https://nuclear.dacoder.io/reactors?apiKey=${apiKey}`)
++      const jsonReactor = await reactorRaw.json()
++      setReactors(jsonReactor.reactors)
++
++      const logsRaw = await fetch(`https://nuclear.dacoder.io/reactors/logs?apiKey=${apiKey}`)
++      const jsonLogs = await logsRaw.json()
++      setLogs(jsonLogs.dynamic_id)
+     }
++
+     getReactors()
++
++    setIdsArray(reactors.map(reactor => reactor.id))
++
+   }, [])
+ 
+   // setIdsArray(reactors.map(reactor => reactor.id))
