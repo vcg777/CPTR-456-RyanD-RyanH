@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import MainArea from "./components/MainArea"
 import NameDisplay from "./components/NameDisplay"
@@ -7,24 +7,30 @@ import TempDisplay from "./components/TempDisplay"
 import ReactorView from './components/ReactorView'
 
 
-function App() {
-  const [open, setOpen] = useState(false)
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
+function App(props) {
+  const { apiKey } = props
+  const [reactors, setReactors] = useState([])
+  const [plantName, setPlantName] = useState("")
+  const [idsArray, setIdsArray] = useState([])
 
+  useEffect(() => {
+    const getReactors = async () => {
+      const rawData = await fetch(`https://nuclear.dacoder.io/reactors?apiKey=${apiKey}`)
+      const jsonData = await rawData.json()
+      setReactors(jsonData.reactors)
+    }
+    getReactors()
+  }, [])
 
+  // setIdsArray(reactors.map(reactor => reactor.id))
 
   return (
     <main>
       <div className='main-page top-row'>
-        <ReactorDisplay
-          handleOpen={handleOpen}
-        />
+        <ReactorDisplay />
         <TempDisplay />
         <TempDisplay />
-        <ReactorDisplay
-          handleOpen={handleOpen}
-        />
+        <ReactorDisplay />
       </div>
       <div className='main-page middle-row'>
         <div className='main-page names'>
@@ -40,19 +46,11 @@ function App() {
         </div>
       </div>
       <div className='main-page bottom-row'>
-        <ReactorDisplay
-          handleOpen={handleOpen}
-        />
+        <ReactorDisplay />
         <TempDisplay />
         <TempDisplay />
-        <ReactorDisplay
-          handleOpen={handleOpen}
-        />
+        <ReactorDisplay />
       </div>
-      <ReactorView
-        open={open}
-        handleClose={handleClose}
-      />
     </main>
   )
 }

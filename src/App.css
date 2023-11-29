@@ -9,6 +9,7 @@ body {
   padding: 0;
   text-align: center;
   --white: #fefffe;
+  --grey: #cacaca;
   --red: #ff6663;
   /* --red-hover: #ff3531; */
   --light-blue: #bfd7ea;
@@ -107,8 +108,21 @@ button {
   width: 70vw;
 }
 
+.reactor-page img {
+  width: 25vw;
+  height: 28vh;
+}
+
 .reactor-top {
   height: 40vh;
+  width: 100vw;
+}
+
+.name-area {
+  display: flex;
+  width: 23vw;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .canvas-understudy {
@@ -126,6 +140,7 @@ button {
 
 .reactor-bottom {
   height: 60vh;
+  width: 100vw;
 }
 
 .control-buttons {
