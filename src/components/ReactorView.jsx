@@ -33,9 +33,49 @@ export default function ReactorView(props) {
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
     const [selected, setSelected] = useState(false)
+    const [reactorInfo, setReactorInfo] = useState({})
+
+
+
+    useEffect(() => {
+        const getReactorInfo = async () => {
+            // const id = "789fa846-1c22-4499-8ccf-ae3300772b61"
+            const rawTemp = await fetch(`https://nuclear.dacoder.io/reactors/temperature/${id}?apiKey=${apiKey}`)
+            const rawCoolant = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${id}?apiKey=${apiKey}`)
+            const rawOutput = await fetch(`https://nuclear.dacoder.io/reactors/output/${id}?apiKey=${apiKey}`)
+            const rawFuelLevel = await fetch(`https://nuclear.dacoder.io/reactors/fuel-level/${id}?apiKey=${apiKey}`)
+            const rawReactorState = await fetch(`https://nuclear.dacoder.io/reactors/reactor-state/${id}?apiKey=${apiKey}`)
+            const rawRodState = await fetch(`https://nuclear.dacoder.io/reactors/rod-state/${id}?apiKey=${apiKey}`)
+            const jsonTemp = await rawTemp.json()
+            const jsonCoolant = await rawCoolant.json()
+            const jsonOutput = await rawOutput.json()
+            const jsonFuelLevel = await rawFuelLevel.json()
+            const jsonReactorState = await rawReactorState.json()
+            const jsonRodState = await rawRodState.json()
+            setReactorInfo({
+                ...reactorInfo,
+                temperature: jsonTemp.temperature,
+                coolant: jsonCoolant.coolant,
+                output: jsonOutput.output,
+                fuelLevel: jsonFuelLevel.fuel,
+                reactorState: jsonReactorState.state,
+                rodState: jsonRodState.control_rods,
+            })
+        }
+
+        
+    const dataInterval = setInterval(getReactorInfo, 500)
+
+    return () => {
+      clearInterval(dataInterval)
+    }
+
+    }, [])
+
 
     return (
         <ThemeProvider theme={theme}>
+            <h1>{JSON.stringify(reactorInfo, null, 2)}</h1>
             <Box sx={{
                 width: "100vw",
                 height: "100vh",
@@ -241,15 +281,15 @@ export default function ReactorView(props) {
                 </div>
             </Box >
             <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-        >
-            <Box sx={style}>
-                <p>This will have an input where you can change the name</p>
-            </Box>
-        </Modal>
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <p>This will have an input where you can change the name</p>
+                </Box>
+            </Modal>
         </ThemeProvider>
     );
 }
