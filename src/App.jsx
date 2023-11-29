@@ -20,17 +20,17 @@ function App(props) {
       setReactors(jsonData.reactors)
     }
     getReactors()
+    setIdsArray(reactors.map(reactor => reactor.id))
   }, [])
 
-  // setIdsArray(reactors.map(reactor => reactor.id))
 
   return (
     <main>
       <div className='main-page top-row'>
-        <ReactorDisplay />
+        <ReactorDisplay id={idsArray[0]} />
         <TempDisplay />
         <TempDisplay />
-        <ReactorDisplay />
+        <ReactorDisplay id={idsArray[1]} />
       </div>
       <div className='main-page middle-row'>
         <div className='main-page names'>
@@ -46,10 +46,10 @@ function App(props) {
         </div>
       </div>
       <div className='main-page bottom-row'>
-        <ReactorDisplay />
+        <ReactorDisplay id={idsArray[2]} />
         <TempDisplay />
         <TempDisplay />
-        <ReactorDisplay />
+        <ReactorDisplay id={idsArray[3]} />
       </div>
     </main>
   )
