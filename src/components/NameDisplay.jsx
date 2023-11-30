@@ -5,11 +5,7 @@ const NameDisplay = (props) => {
 
     return (
         <>
-            <Typography
-                variant="h4"
-            >
-                Name
-            </Typography>
+            
         </>
     )
 }

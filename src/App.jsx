@@ -1,19 +1,29 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import MainArea from "./components/MainArea"
-import NameDisplay from "./components/NameDisplay"
 import ReactorDisplay from "./components/ReactorDisplay"
-import TempDisplay from "./components/TempDisplay"
+import { useSnackbar } from 'notistack'
 import ReactorView from './components/ReactorView'
 
 
 function App(props) {
   const { apiKey } = props
   const [reactors, setReactors] = useState([])
-  const [plantName, setPlantName] = useState("")
-  const [idsArray, setIdsArray] = useState([])
-  const [logs, setLogs] = useState([])
+  const [logs, setLogs] = useState({})
+  // const { enqueueSnackbar } = useSnackbar()
 
+
+  // const addMessage = () => {
+  //   enqueueSnackbar("This is a good message", { variant: "success"})
+  // }
+
+  // const addBadMessage = () => {
+  //   enqueueSnackbar("This is a bad message", { variant: "error"})
+  // }
+
+  // const addInfoMessage = () => {
+  //   enqueueSnackbar("This is an info message", { variant: "info"})
+  // }
 
   useEffect(() => {
     const getReactors = async () => {
@@ -28,38 +38,15 @@ function App(props) {
 
     getReactors()
 
-    setIdsArray(reactors.map(reactor => reactor.id))
-
   }, [])
 
 
   return (
     <main>
-      <div className='main-page top-row'>
-        <ReactorDisplay id={idsArray[0]} />
-        <TempDisplay />
-        <TempDisplay />
-        <ReactorDisplay id={idsArray[1]} />
-      </div>
-      <div className='main-page middle-row'>
-        <div className='main-page names'>
-          <NameDisplay />
-          <div className='h-line'></div>
-          <NameDisplay />
-        </div>
         <MainArea />
-        <div className='main-page names'>
-          <NameDisplay />
-          <div className='h-line'></div>
-          <NameDisplay />
-        </div>
-      </div>
-      <div className='main-page bottom-row'>
-        <ReactorDisplay id={idsArray[2]} />
-        <TempDisplay />
-        <TempDisplay />
-        <ReactorDisplay id={idsArray[3]} />
-      </div>
+        {reactors && reactors.map(reactor => {
+          <ReactorView id={reactor.id} />
+        })}
     </main>
   )
 }

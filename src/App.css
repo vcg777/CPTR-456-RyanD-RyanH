@@ -26,7 +26,6 @@ main {
   display: flex;
   flex-direction: column;
   width: 100vw;
-  height: 100vh;
   justify-content: center;
   align-items: center;
 }
@@ -40,65 +39,48 @@ button {
 
 /* Home Page */
 
-.main-page {
+.reactor-display {
   display: flex;
-  height: 33.3333333333333333333333333333333333vh;
+  width: 80vw;
+  justify-content: space-evenly;
+  align-items: center;
+  border-bottom: 1px solid var(--white);
+  padding: 30px 0;
 }
 
-.top-row,
-.bottom-row {
-  display: flex;
-  width: 100vw;
+.reactor-display:hover {
+  background-color: #414141;
 }
 
-.main-page img {
-  width: 33vw;
-  height: 33.3333333333333333333333333333333333vh;
+.reactor-display:active {
+  background-color: #1b1b1b;
+}
+
+.reactor-info {
+  display: flex;
+  width: 40vw;
+  justify-content: space-around;
+  align-items: center;
 }
 
 .temp-display {
   display: flex;
-  width: 17vw;
-  gap: 60px;
   flex-direction: column;
-}
-
-.temp-display:nth-child(even) {
-  border-right: 1px solid var(--white);
-}
-
-.middle-row {
-  width: 100vw;
-}
-
-.main-area {
-  width: 34vw;
-}
-
-.names {
-  display: flex;
-  flex-direction: column;
-  gap: 5vh;
-  justify-content: center;
-  width: 33vw;
-}
-
-.h-line {
-  background-color: var(--white);
-  height: 1px;
-  width: 100%;
+  gap: 10px;
 }
 
 .totals-area {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  gap: 10px;
   width: 13vh;
 }
 
 .main-buttons {
   display: flex;
-  gap: 1.5vh;
+  width: 80vw;
+  justify-content: center;
+  gap: 7vh;
 }
 
 /* Reactor Page */
@@ -147,6 +129,11 @@ button {
   display: flex;
   width: 35vw;
   justify-content: space-evenly;
+}
+
+.Mui-selected {
+  background: #0b3954;
+  color: #fefffe;
 }
 
 .temp-data,

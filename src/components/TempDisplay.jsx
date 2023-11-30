@@ -9,7 +9,6 @@ const TempDisplay = (props) => {
                 variant="h6"
                 sx={{
                     textDecoration: "underline",
-                    marginTop: "40px"
                 }}
             >
                 Temperature

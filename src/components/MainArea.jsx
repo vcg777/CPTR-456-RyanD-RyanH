@@ -48,66 +48,53 @@ const MainArea = (props) => {
             <Box sx={{
                 display: "flex",
                 flexDirection: "column",
-                width: "34vw",
-                border: 1
+                width: "100vw",
+                borderBottom: 1,
+                padding: "10px",
+                alignItems: "center",
             }}>
                 <Box sx={{
                     // border: 1,
                     // borderColor: "orange",
                     display: "flex",
                     height: "16vh",
+                    width: "100vw",
                     alignItems: "center",
                     justifyContent: "space-evenly",
-                    boxSizing: "border-box",
-                    p: 1,
                 }}>
                     <div className="totals-area">
                         <Typography variant="h6" sx={{ textDecoration: "underline", fontSize: 15 }}>Avg. Temp</Typography>
                         <Typography variant="h4" sx={{ color: "#bfd7ea", fontSize: 25 }}>25°C</Typography>
+                    </div>
+                    <Typography variant="h6" sx={{
+                        width: "20vw",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
+                    }}>
+                        The Power Plant
+                    </Typography>
+                    <div className="totals-area">
                         <Typography variant="h6" sx={{ textDecoration: "underline", fontSize: 15 }}>Total Output</Typography>
                         <Typography variant="h4" sx={{ fontSize: 25 }}>1.3 GW</Typography>
                     </div>
-                    <Typography variant="h6" sx={{ width: "10vw", display: "flex", alignItems: "center" }}>The Power Plant</Typography>
-                    <Button sx={[{
-                        width: "13vh",
-                        height: "13vh",
-                        backgroundColor: "#0b3954",
-                        color: "#fefffe",
-                        borderRadius: 3,
-                        border: 4,
-                        borderColor: "#a5a5a5",
-                    },
-                    {
-                        '&:hover': {
-                            backgroundColor: "#16567b"
-                        }
-                    }]}
-                        variant="contained"
-                    >
-                        SYSTEM LOGS
-                    </Button>
+
                 </Box>
                 <Box sx={{
-                    display: "flex"
+                    // backgroundColor: "orange",
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "20px",
                 }}>
-                    <Box sx={{
-                        // border: 1,
-                        // borderColor: "red",
-                        height: "16vh",
-                        width: "17vw"
-                    }}>
-                        <canvas ref={canvasRef}></canvas>
-                    </Box>
                     <Box sx={{
                         // border: 1,
                         // borderColor: "green",
                         display: "flex",
                         flexDirection: "column",
-                        gap: "1.5vh",
                         alignItems: "center",
-                        justifyContent: "center",
-                        height: "16vh",
-                        width: "17vw",
+                        gap: "5vh",
+                        justifyContent: "space-around",
+                        width: "80vw",
                     }}>
                         <div className="main-buttons">
                             <Button
@@ -115,8 +102,8 @@ const MainArea = (props) => {
                                 sx={[{
                                     height: "6vh",
                                     borderRadius: "15px",
-                                    width: "75px",
-                                    fontSize: 10,
+                                    width: "150px",
+                                    fontSize: 15,
                                     backgroundColor: "#ff6663",
                                     color: "#1b1212",
                                     border: 4,
@@ -136,8 +123,8 @@ const MainArea = (props) => {
                                 sx={[{
                                     height: "6vh",
                                     borderRadius: "15px",
-                                    width: "75px",
-                                    fontSize: 10,
+                                    width: "150px",
+                                    fontSize: 15,
                                     backgroundColor: "#bfd7ea",
                                     color: "#1b1212",
                                     border: 4,
@@ -152,15 +139,54 @@ const MainArea = (props) => {
                             >
                                 COOL
                             </Button>
-                        </div>
-                        <div className="main-buttons">
                             <Button
                                 variant="contained"
                                 sx={[{
                                     height: "6vh",
                                     borderRadius: "15px",
-                                    width: "75px",
-                                    fontSize: 10,
+                                    width: "150px",
+                                    fontSize: 15,
+                                    backgroundColor: "#e0ff4f",
+                                    color: "#1b1212",
+                                    border: 4,
+                                    borderColor: "#a5a5a5",
+                                },
+                                {
+                                    '&:hover': {
+                                        backgroundColor: "#fffb00"
+                                    }
+                                }
+                                ]}
+                            >
+                                SLEEP
+                            </Button>
+                        </div>
+                        <div className="main-buttons">
+                            <Button sx={[{
+                                height: "6vh",
+                                width: "150px",
+                                backgroundColor: "#0b3954",
+                                color: "#fefffe",
+                                borderRadius: "15px",
+                                border: 4,
+                                borderColor: "#a5a5a5",
+                            },
+                            {
+                                '&:hover': {
+                                    backgroundColor: "#16567b"
+                                }
+                            }]}
+                                variant="contained"
+                            >
+                                SYSTEM LOGS
+                            </Button>
+                            <Button
+                                variant="contained"
+                                sx={[{
+                                    height: "6vh",
+                                    borderRadius: "15px",
+                                    width: "150px",
+                                    fontSize: 15,
                                     backgroundColor: "#1b1212",
                                     border: 4,
                                     borderColor: "#a5a5a5",
@@ -179,24 +205,33 @@ const MainArea = (props) => {
                                 sx={[{
                                     height: "6vh",
                                     borderRadius: "15px",
-                                    width: "75px",
-                                    fontSize: 10,
-                                    backgroundColor: "#e0ff4f",
+                                    width: "150px",
+                                    fontSize: 15,
+                                    backgroundColor: "info.main",
                                     color: "#1b1212",
                                     border: 4,
                                     borderColor: "#a5a5a5",
                                 },
                                 {
                                     '&:hover': {
-                                        backgroundColor: "#fffb00"
+                                        backgroundColor: "info.light"
                                     }
                                 }
                                 ]}
                             >
-                                SLEEP
+                                EDIT
                             </Button>
                         </div>
                     </Box>
+                </Box>
+                <Box sx={{
+                    border: 1,
+                    borderColor: "red",
+                    height: "30vh",
+                    width: "40vw",
+                    margin: "40px 0 30px",
+                }}>
+                    {/* <canvas ref={canvasRef}></canvas> */}
                 </Box>
             </Box>
         </>

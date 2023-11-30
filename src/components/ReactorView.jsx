@@ -63,12 +63,12 @@ export default function ReactorView(props) {
             })
         }
 
-        
-    const dataInterval = setInterval(getReactorInfo, 500)
 
-    return () => {
-      clearInterval(dataInterval)
-    }
+        const dataInterval = setInterval(getReactorInfo, 500)
+
+        return () => {
+            clearInterval(dataInterval)
+        }
 
     }, [])
 
@@ -168,12 +168,6 @@ export default function ReactorView(props) {
                                         backgroundColor: "#0b3954",
                                         color: "#fefffe",
                                     }
-                                },
-                                {
-                                    '&:active': {
-                                        backgroundColor: "#0b3954",
-                                        color: "#fefffe",
-                                    }
                                 }
                                 ]}
                             >
@@ -266,6 +260,22 @@ export default function ReactorView(props) {
                             }}>
                                 <Typography variant='h5'>Inserted</Typography>
                                 <Typography variant='h4'>150</Typography>
+                                <Button sx={[{
+                                    height: "6vh",
+                                    width: "7vw",
+                                    borderRadius: "15px",
+                                    fontSize: 13,
+                                    backgroundColor: "info.main",
+                                    color: "#1b1212",
+                                },
+                                {
+                                    '&:hover': {
+                                        color: "info.light",
+                                    }
+                                }
+                                ]}>
+                                    Insert
+                                </Button>
                             </Box>
                             <Box sx={{
                                 display: "flex",
@@ -275,6 +285,23 @@ export default function ReactorView(props) {
                             }}>
                                 <Typography variant='h5'>Removed</Typography>
                                 <Typography variant='h4'>150</Typography>
+                                <Button sx={[{
+                                    height: "6vh",
+                                    width: "7vw",
+                                    borderRadius: "15px",
+                                    fontSize: 13,
+                                    backgroundColor: "info.main",
+                                    color: "#1b1212",
+
+                                },
+                                {
+                                    '&:hover': {
+                                        color: "info.light",
+                                    }
+                                }
+                                ]}>
+                                    Remove
+                                </Button>
                             </Box>
                         </div>
                     </Box>
