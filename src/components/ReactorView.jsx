@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { TextField, Box, Button, IconButton, Typography, Modal, MenuItem, ToggleButton } from '@mui/material'
+import { TextField, Box, Button, IconButton, Typography, Modal, MenuItem, ToggleButton, Select } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { EditRounded, LocalGasStationRounded } from '@mui/icons-material';
 import { useEffect } from 'react'
@@ -27,14 +27,17 @@ const theme = createTheme({
     },
 });
 
+
 export default function ReactorView(props) {
+    const { apiKey } = props
     const { id } = useParams()
     const [open, setOpen] = useState(false)
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
     const [selected, setSelected] = useState(false)
     const [reactorInfo, setReactorInfo] = useState({})
-
+    const [tempColor, setTempColor] = useState("")
+    const [loading, setLoading] = useState(true)
 
 
     useEffect(() => {
@@ -61,262 +64,378 @@ export default function ReactorView(props) {
                 reactorState: jsonReactorState.state,
                 rodState: jsonRodState.control_rods,
             })
+            setLoading(false)
         }
+        getReactorInfo()
 
 
-        const dataInterval = setInterval(getReactorInfo, 500)
+        // const dataInterval = setInterval(getReactorInfo, 500)
 
-        return () => {
-            clearInterval(dataInterval)
-        }
+        // return () => {
+        //     clearInterval(dataInterval)
+        // }
 
     }, [])
 
+    // useEffect(() => {
+    //     setTempColor(() => {
+    //         if (reactorInfo.temperature.status === "Safe") {
+    //             return "success.main"
+    //         } else if (reactorInfo.temperature.status === "Warning") {
+    //             return "warning.main"
+    //         } else if (reactorInfo.temperature.status === "Danger") {
+    //             return "error.dark"
+    //         } else {
+    //             return "secondary.main"
+    //         }
+    //     })
+    // }, [reactorInfo.temperature])
+
+    const changeCoolantState = async () => {
+        const changeCoolantState = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${id}?apikey=${apiKey}`, {
+            method: "POST"
+        })
+        // Snack log the result
+    }
+
+    const dropRod = async () => {
+        const dropRod = await fetch(`https://nuclear.dacoder.io/reactors/drop-rod/${id}?apikey=${apiKey}`, {
+            method: "POST"
+        })
+        // Snack log the result
+    }
+
+    const raiseRod = async () => {
+        const raiseRod = await fetch(`https://nuclear.dacoder.io/reactors/raise-rod/${id}?apikey=${apiKey}`, {
+            method: "POST"
+        })
+        // Snack log the result
+    }
+
+    const emergencyShutdown = async () => {
+        const emergencyShutdown = await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${id}?apikey=${apiKey}`, {
+            method: "POST"
+        })
+        // Snack log the result
+    }
+
+    const controlledShutdown = async () => {
+        const controlledShutdown = await fetch(`https://nuclear.dacoder.io/reactors/controlled-shutdown/${id}?apikey=${apiKey}`, {
+            method: "POST"
+        })
+        // Snack log the result
+    }
+
+    const maintenance = async () => {
+        const maintenance = await fetch(`https://nuclear.dacoder.io/reactors/maintenance/${id}?apikey=${apiKey}`, {
+            method: "POST"
+        })
+        // Snack log the result
+    }
+
+    const refuel = async () => {
+        maintenance
+        const refuel = await fetch(`https://nuclear.dacoder.io/reactors/refuel/${id}?apikey=${apiKey}`, {
+            method: "POST"
+        })
+        maintenance
+        // Snack log the result
+    }
+
+    const changeStatus = (event) => {
+
+    }
+
+    const startReactor = async () => {
+        const startReactor = await fetch(`https://nuclear.dacoder.io/reactors/start-reactor/${id}?apikey=${apiKey}`, {
+            method: "POST"
+        })
+        // Snack log the result
+    }
+
 
     return (
-        <ThemeProvider theme={theme}>
-            <h1>{JSON.stringify(reactorInfo, null, 2)}</h1>
-            <Box sx={{
-                width: "100vw",
-                height: "100vh",
-                bgcolor: '#242424',
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "3vh"
-            }}>
-                <div className='reactor-page reactor-top'>
+        <>
+            {!loading && (
+                <ThemeProvider theme={theme}>
+                    <h1>{JSON.stringify(reactorInfo, null, 2)}</h1>
                     <Box sx={{
+                        width: "100vw",
+                        height: "100vh",
+                        bgcolor: '#242424',
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        justifyContent: "space-evenly",
-                        width: "100vw",
-                        height: "40vh",
+                        gap: "3vh"
                     }}>
-                        <div className='name-area'>
-                            <Typography variant='h5' sx={{ padding: 1 }}>Name</Typography>
-                            <IconButton
-                                onClick={() => handleOpen()}
-                                sx={[{
-                                    height: "4vh",
-                                    borderRadius: "11px",
-                                    width: "3vw",
-                                    color: "info.light",
-                                },
-                                {
-                                    '&:hover': {
-                                        backgroundColor: "info.main",
+                        <div className='reactor-page reactor-top'>
+                            <Box sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "space-evenly",
+                                width: "100vw",
+                                height: "40vh",
+                            }}>
+                                <div className='name-area'>
+                                    <Typography variant='h5' sx={{ padding: 1 }}>Name</Typography>
+                                    <IconButton
+                                        onClick={() => handleOpen()}
+                                        sx={[{
+                                            height: "4vh",
+                                            borderRadius: "11px",
+                                            width: "3vw",
+                                            color: "info.light",
+                                        },
+                                        {
+                                            '&:hover': {
+                                                backgroundColor: "info.main",
+                                                color: "#1b1212",
+                                            }
+                                        }
+                                        ]}
+                                    >
+                                        <EditRounded />
+                                    </IconButton>
+                                </div>
+                                <img src={standIn} />
+                                    <Select
+                                        value={reactorInfo.reactorState}
+                                        onChange={changeStatus}
+                                        label="Status"
+                                        sx={[{
+                                            backgroundColor: "info.light"
+                                        }
+                                        ]}
+                                        displayEmpty
+                                        renderValue={() => reactorInfo.reactorState}
+                                    >
+                                        <MenuItem value="online">Online </MenuItem>
+                                        <MenuItem value="offline">Offline</MenuItem>
+                                        <MenuItem value="maintenance">Maintenance</MenuItem>
+                                        <MenuItem value="emergency-shutdown">Dead</MenuItem>
+                                    </Select>
+                            </Box>
+                            <Box sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "space-evenly",
+                                width: "100vw",
+                                height: "40vh",
+                            }}>
+                                {/* <canvas ref={canvasRef}></canvas> */}
+                                <div className='canvas-understudy'></div> {/* This is representing the graph for styling purposes */}
+                                <div className='output-words'>
+                                    <Typography variant='h5'>OUTPUT:</Typography>
+                                    <Typography variant='h4'>260</Typography>
+                                    <Typography variant='h5'>MW</Typography>
+                                </div>
+
+                            </Box>
+                        </div>
+                        <div className='reactor-page reactor-bottom'>
+                            <Box sx={{
+                                height: "55vh",
+                                width: "100vw",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "space-evenly",
+                                alignItems: "center",
+                            }}>
+                                <Typography variant='h5'>Control Panel</Typography>
+                                <div className='control-buttons'>
+                                    <ToggleButton
+                                        value="check"
+                                        selected={selected}
+                                        onChange={() => {
+                                            setSelected(!selected)
+                                            changeCoolantState
+                                        }}
+                                        sx={[{
+                                            height: "6vh",
+                                            borderRadius: "15px",
+                                            width: "75px",
+                                            fontSize: 13,
+                                            backgroundColor: "#bfd7ea",
+                                            color: "#1b1212",
+                                            border: 4,
+                                            borderColor: "#a5a5a5",
+                                        },
+                                        {
+                                            '&:hover': {
+                                                backgroundColor: "#0b3954",
+                                                color: "#fefffe",
+                                            }
+                                        }
+                                        ]}
+                                    >
+                                        COOL
+                                    </ToggleButton>
+                                    <IconButton
+                                        sx={[{
+                                            height: "6vh",
+                                            borderRadius: "15px",
+                                            width: "75px",
+                                            fontSize: 13,
+                                            backgroundColor: "warning.light",
+                                            color: "#1b1212",
+                                            border: 4,
+                                            borderColor: "#a5a5a5",
+                                        },
+                                        {
+                                            '&:hover': {
+                                                backgroundColor: "warning.main"
+                                            }
+                                        }
+                                        ]}
+                                        onClick={refuel}
+                                    >
+                                        <LocalGasStationRounded />
+                                    </IconButton>
+                                </div>
+                                <Button
+                                    sx={[{
+                                        height: "10vh",
+                                        borderRadius: "15px",
+                                        width: "30vw",
+                                        fontSize: 13,
+                                        backgroundColor: "#e0ff4f",
                                         color: "#1b1212",
+                                        border: 4,
+                                        borderColor: "#a5a5a5",
+                                    },
+                                    {
+                                        '&:hover': {
+                                            backgroundColor: "#fffb00"
+                                        }
                                     }
-                                }
-                                ]}
-                            >
-                                <EditRounded />
-                            </IconButton>
-                        </div>
-                        <img src={standIn} />
-                        <Typography variant='h5' sx={{ paddingTop: 1 }}>Online</Typography>
-                    </Box>
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "space-evenly",
-                        width: "100vw",
-                        height: "40vh",
-                    }}>
-                        {/* <canvas ref={canvasRef}></canvas> */}
-                        <div className='canvas-understudy'></div> {/* This is representing the graph for styling purposes */}
-                        <div className='output-words'>
-                            <Typography variant='h5'>OUTPUT:</Typography>
-                            <Typography variant='h4'>260</Typography>
-                            <Typography variant='h5'>MW</Typography>
-                        </div>
-
-                    </Box>
-                </div>
-                <div className='reactor-page reactor-bottom'>
-                    <Box sx={{
-                        height: "55vh",
-                        width: "100vw",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "space-evenly",
-                        alignItems: "center",
-                    }}>
-                        <Typography variant='h5'>Control Panel</Typography>
-                        <div className='control-buttons'>
-                            <ToggleButton
-                                value="check"
-                                selected={selected}
-                                onChange={() => {
-                                    setSelected(!selected);
-                                }}
-                                sx={[{
-                                    height: "6vh",
-                                    borderRadius: "15px",
-                                    width: "75px",
-                                    fontSize: 13,
-                                    backgroundColor: "#bfd7ea",
-                                    color: "#1b1212",
-                                    border: 4,
-                                    borderColor: "#a5a5a5",
-                                },
-                                {
-                                    '&:hover': {
-                                        backgroundColor: "#0b3954",
-                                        color: "#fefffe",
+                                    ]}
+                                    onClick={controlledShutdown}
+                                >
+                                    SLEEP
+                                </Button>
+                                <Button
+                                    sx={[{
+                                        height: "10vh",
+                                        borderRadius: "15px",
+                                        width: "30vw",
+                                        fontSize: 13,
+                                        backgroundColor: "#ff6663",
+                                        color: "#1b1212",
+                                        border: 4,
+                                        borderColor: "#a5a5a5",
+                                    },
+                                    {
+                                        '&:hover': {
+                                            backgroundColor: "#ff3531"
+                                        }
                                     }
-                                }
-                                ]}
-                            >
-                                COOL
-                            </ToggleButton>
-                            <IconButton
-                                sx={[{
-                                    height: "6vh",
-                                    borderRadius: "15px",
-                                    width: "75px",
-                                    fontSize: 13,
-                                    backgroundColor: "warning.light",
-                                    color: "#1b1212",
-                                    border: 4,
-                                    borderColor: "#a5a5a5",
-                                },
-                                {
-                                    '&:hover': {
-                                        backgroundColor: "warning.main"
-                                    }
-                                }
-                                ]}
-                            >
-                                <LocalGasStationRounded />
-                            </IconButton>
-                        </div>
-                        <Button
-                            sx={[{
-                                height: "10vh",
-                                borderRadius: "15px",
-                                width: "30vw",
-                                fontSize: 13,
-                                backgroundColor: "#e0ff4f",
-                                color: "#1b1212",
-                                border: 4,
-                                borderColor: "#a5a5a5",
-                            },
-                            {
-                                '&:hover': {
-                                    backgroundColor: "#fffb00"
-                                }
-                            }
-                            ]}
-                        >
-                            SLEEP
-                        </Button>
-                        <Button
-                            sx={[{
-                                height: "10vh",
-                                borderRadius: "15px",
-                                width: "30vw",
-                                fontSize: 13,
-                                backgroundColor: "#ff6663",
-                                color: "#1b1212",
-                                border: 4,
-                                borderColor: "#a5a5a5",
-                            },
-                            {
-                                '&:hover': {
-                                    backgroundColor: "#ff3531"
-                                }
-                            }
-                            ]}
-                        >
-                            KILL
-                        </Button>
-                    </Box>
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "space-evenly",
-                        width: "100vw",
-                        height: "55vh",
-                        borderLeft: "1px solid #fefffe",
-
-                    }}>
-                        <Typography variant='h5'>Temperature</Typography>
-                        <div className='temp-data'>
-                            <Typography variant='h4' sx={{ color: "#bfd7ea" }}>25°C</Typography>
-                            <Typography variant='h4' sx={{ color: "success.main" }}>SAFE</Typography>
-                        </div>
-                        <Typography variant='h5' sx={{ marginTop: 5 }}>Rods</Typography>
-                        <div className='rods-data'>
-                            <Box sx={{
-                                display: "flex",
-                                flexDirection: 'column',
-                                alignItems: "center",
-                                gap: 3,
-                            }}>
-                                <Typography variant='h5'>Inserted</Typography>
-                                <Typography variant='h4'>150</Typography>
-                                <Button sx={[{
-                                    height: "6vh",
-                                    width: "7vw",
-                                    borderRadius: "15px",
-                                    fontSize: 13,
-                                    backgroundColor: "info.main",
-                                    color: "#1b1212",
-                                },
-                                {
-                                    '&:hover': {
-                                        color: "info.light",
-                                    }
-                                }
-                                ]}>
-                                    Insert
+                                    ]}
+                                    onClick={emergencyShutdown}
+                                >
+                                    KILL
                                 </Button>
                             </Box>
                             <Box sx={{
                                 display: "flex",
-                                flexDirection: 'column',
+                                flexDirection: "column",
                                 alignItems: "center",
-                                gap: 3,
-                            }}>
-                                <Typography variant='h5'>Removed</Typography>
-                                <Typography variant='h4'>150</Typography>
-                                <Button sx={[{
-                                    height: "6vh",
-                                    width: "7vw",
-                                    borderRadius: "15px",
-                                    fontSize: 13,
-                                    backgroundColor: "info.main",
-                                    color: "#1b1212",
+                                justifyContent: "space-evenly",
+                                width: "100vw",
+                                height: "55vh",
+                                borderLeft: "1px solid #fefffe",
 
-                                },
-                                {
-                                    '&:hover': {
-                                        color: "info.light",
-                                    }
-                                }
-                                ]}>
-                                    Remove
-                                </Button>
+                            }}>
+                                <Typography variant='h5'>Temperature</Typography>
+                                <div className='temp-data'>
+                                    <Typography variant='h4' sx={{ color: "#bfd7ea" }}>
+                                        {reactorInfo.temperature.amount}
+                                        {reactorInfo.temperature.unit === "celsius" ? "°C" : "K"}
+                                    </Typography>
+                                    <Typography
+                                        variant='h4'
+                                        sx={{
+                                            color: tempColor
+                                        }}
+                                    >
+                                        {reactorInfo.temperature.status.toUpperCase()}
+                                    </Typography>
+                                </div>
+                                <Typography variant='h5' sx={{ marginTop: 5 }}>Rods</Typography>
+                                <div className='rods-data'>
+                                    <Box sx={{
+                                        display: "flex",
+                                        flexDirection: 'column',
+                                        alignItems: "center",
+                                        gap: 3,
+                                    }}>
+                                        <Typography variant='h5'>Inserted</Typography>
+                                        <Typography variant='h4'>150</Typography>
+                                        <Button sx={[{
+                                            height: "6vh",
+                                            width: "7vw",
+                                            borderRadius: "15px",
+                                            fontSize: 13,
+                                            backgroundColor: "info.main",
+                                            color: "#1b1212",
+                                        },
+                                        {
+                                            '&:hover': {
+                                                color: "info.light",
+                                            }
+                                        }
+                                        ]}
+                                            onClick={dropRod}
+                                        >
+                                            Insert
+                                        </Button>
+                                    </Box>
+                                    <Box sx={{
+                                        display: "flex",
+                                        flexDirection: 'column',
+                                        alignItems: "center",
+                                        gap: 3,
+                                    }}>
+                                        <Typography variant='h5'>Removed</Typography>
+                                        <Typography variant='h4'>150</Typography>
+                                        <Button sx={[{
+                                            height: "6vh",
+                                            width: "7vw",
+                                            borderRadius: "15px",
+                                            fontSize: 13,
+                                            backgroundColor: "info.main",
+                                            color: "#1b1212",
+
+                                        },
+                                        {
+                                            '&:hover': {
+                                                color: "info.light",
+                                            }
+                                        }
+                                        ]}
+                                            onClick={raiseRod}
+                                        >
+                                            Remove
+                                        </Button>
+                                    </Box>
+                                </div>
                             </Box>
                         </div>
-                    </Box>
-                </div>
-            </Box >
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style}>
-                    <p>This will have an input where you can change the name</p>
-                </Box>
-            </Modal>
-        </ThemeProvider>
+                    </Box >
+                    <Modal
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Box sx={style}>
+                            <p>This will have an input where you can change the name</p>
+                        </Box>
+                    </Modal>
+                </ThemeProvider>
+            )
+            }
+        </>
     );
 }

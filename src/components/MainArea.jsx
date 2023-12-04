@@ -43,6 +43,13 @@ const MainArea = (props) => {
     //     }
     //   }, [data])
 
+    const reset = async () => {
+        const reset = await fetch(`https://nuclear.dacoder.io/reactors/reset?apikey=${apiKey}`, {
+            method: "POST"
+        })
+        // Snack log the result
+    }
+
     return (
         <>
             <Box sx={{
@@ -188,6 +195,7 @@ const MainArea = (props) => {
                                     width: "150px",
                                     fontSize: 15,
                                     backgroundColor: "#1b1212",
+                                    color: "#fefffe",
                                     border: 4,
                                     borderColor: "#a5a5a5",
                                 },
@@ -197,6 +205,7 @@ const MainArea = (props) => {
                                     }
                                 }
                                 ]}
+                            onClick={reset}
                             >
                                 RESET
                             </Button>

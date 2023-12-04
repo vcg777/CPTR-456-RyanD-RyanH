@@ -16,7 +16,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Routes>
           <Route path='/' element={<App apiKey={howellApiKey} />} />
           {/* <Route path='/' element={<App apiKey={downsApiKey} />} /> */}
-          <Route path='/:id' element={<ReactorView />} />
+          <Route path='/:id' element={<ReactorView apiKey={howellApiKey} />} />
         </Routes>
       </BrowserRouter>
     </SnackbarProvider>

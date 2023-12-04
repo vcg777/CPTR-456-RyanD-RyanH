@@ -3,7 +3,6 @@ import './App.css'
 import MainArea from "./components/MainArea"
 import ReactorDisplay from "./components/ReactorDisplay"
 import { useSnackbar } from 'notistack'
-import ReactorView from './components/ReactorView'
 
 
 function App(props) {
@@ -40,13 +39,18 @@ function App(props) {
 
   }, [])
 
+  const ids = reactors.map(reactor => reactor.id)
 
   return (
     <main>
         <MainArea />
-        {reactors && reactors.map(reactor => {
-          <ReactorView id={reactor.id} />
-        })}
+        <ReactorDisplay id={ids[0]} />
+        <ReactorDisplay id={ids[1]} />
+        <ReactorDisplay id={ids[2]} />
+        <ReactorDisplay id={ids[3]} />
+        {/* {reactors.map(reactor => {
+          <ReactorDisplay id={reactor.id} />
+        })} */}
     </main>
   )
 }
