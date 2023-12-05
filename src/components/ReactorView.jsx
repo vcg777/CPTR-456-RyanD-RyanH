@@ -143,7 +143,24 @@ export default function ReactorView(props) {
     }
 
     const changeStatus = (event) => {
+        const { value } = event.target.value
+        if (value === "online") {
+            startReactor
+        } else if (value === "offline") {
+            controlledShutdown
+        } else if (value === "maintenance") {
+            maintenance
+        } else {
+            controlledShutdown
+        }
 
+        console.log(value)
+        setReactorInfo(prevReactorInfo => {
+            return ({
+                ...prevReactorInfo,
+                reactorState: { value }
+            })
+        })
     }
 
     const startReactor = async () => {
@@ -199,22 +216,22 @@ export default function ReactorView(props) {
                                     </IconButton>
                                 </div>
                                 <img src={standIn} />
-                                    <Select
-                                        value={reactorInfo.reactorState}
-                                        onChange={changeStatus}
-                                        label="Status"
-                                        sx={[{
-                                            backgroundColor: "info.light"
-                                        }
-                                        ]}
-                                        displayEmpty
-                                        renderValue={() => reactorInfo.reactorState}
-                                    >
-                                        <MenuItem value="online">Online </MenuItem>
-                                        <MenuItem value="offline">Offline</MenuItem>
-                                        <MenuItem value="maintenance">Maintenance</MenuItem>
-                                        <MenuItem value="emergency-shutdown">Dead</MenuItem>
-                                    </Select>
+                                <Select
+                                    value={reactorInfo.reactorState}
+                                    onChange={changeStatus}
+                                    label="Status"
+                                    sx={[{
+                                        backgroundColor: "info.light"
+                                    }
+                                    ]}
+                                    displayEmpty
+                                    renderValue={() => reactorInfo.reactorState}
+                                >
+                                    <MenuItem value="online">Online </MenuItem>
+                                    <MenuItem value="offline">Offline</MenuItem>
+                                    <MenuItem value="maintenance">Maintenance</MenuItem>
+                                    <MenuItem value="emergency-shutdown">Dead</MenuItem>
+                                </Select>
                             </Box>
                             <Box sx={{
                                 display: "flex",
@@ -228,7 +245,7 @@ export default function ReactorView(props) {
                                 <div className='canvas-understudy'></div> {/* This is representing the graph for styling purposes */}
                                 <div className='output-words'>
                                     <Typography variant='h5'>OUTPUT:</Typography>
-                                    <Typography variant='h4'>260</Typography>
+                                    <Typography variant='h4'>{reactorInfo.output}</Typography>
                                     <Typography variant='h5'>MW</Typography>
                                 </div>
 
