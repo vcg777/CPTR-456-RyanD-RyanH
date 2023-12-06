@@ -69,11 +69,11 @@ export default function ReactorView(props) {
         getReactorInfo()
 
 
-        // const dataInterval = setInterval(getReactorInfo, 500)
+        const dataInterval = setInterval(getReactorInfo, 500)
 
-        // return () => {
-        //     clearInterval(dataInterval)
-        // }
+        return () => {
+            clearInterval(dataInterval)
+        }
 
     }, [])
 
@@ -92,42 +92,42 @@ export default function ReactorView(props) {
     // }, [reactorInfo.temperature])
 
     const changeCoolantState = async () => {
-        const changeCoolantState = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${id}?apikey=${apiKey}`, {
+        const changeCoolantState = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${id}?apiKey=${apiKey}`, {
             method: "POST"
         })
         // Snack log the result
     }
 
     const dropRod = async () => {
-        const dropRod = await fetch(`https://nuclear.dacoder.io/reactors/drop-rod/${id}?apikey=${apiKey}`, {
+        const dropRod = await fetch(`https://nuclear.dacoder.io/reactors/drop-rod/${id}?apiKey=${apiKey}`, {
             method: "POST"
         })
         // Snack log the result
     }
 
     const raiseRod = async () => {
-        const raiseRod = await fetch(`https://nuclear.dacoder.io/reactors/raise-rod/${id}?apikey=${apiKey}`, {
+        const raiseRod = await fetch(`https://nuclear.dacoder.io/reactors/raise-rod/${id}?apiKey=${apiKey}`, {
             method: "POST"
         })
         // Snack log the result
     }
 
     const emergencyShutdown = async () => {
-        const emergencyShutdown = await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${id}?apikey=${apiKey}`, {
+        const emergencyShutdown = await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${id}?apiKey=${apiKey}`, {
             method: "POST"
         })
         // Snack log the result
     }
 
     const controlledShutdown = async () => {
-        const controlledShutdown = await fetch(`https://nuclear.dacoder.io/reactors/controlled-shutdown/${id}?apikey=${apiKey}`, {
+        const controlledShutdown = await fetch(`https://nuclear.dacoder.io/reactors/controlled-shutdown/${id}?apiKey=${apiKey}`, {
             method: "POST"
         })
         // Snack log the result
     }
 
     const maintenance = async () => {
-        const maintenance = await fetch(`https://nuclear.dacoder.io/reactors/maintenance/${id}?apikey=${apiKey}`, {
+        const maintenance = await fetch(`https://nuclear.dacoder.io/reactors/maintenance/${id}?apiKey=${apiKey}`, {
             method: "POST"
         })
         // Snack log the result
@@ -135,7 +135,7 @@ export default function ReactorView(props) {
 
     const refuel = async () => {
         maintenance
-        const refuel = await fetch(`https://nuclear.dacoder.io/reactors/refuel/${id}?apikey=${apiKey}`, {
+        const refuel = await fetch(`https://nuclear.dacoder.io/reactors/refuel/${id}?apiKey=${apiKey}`, {
             method: "POST"
         })
         maintenance
@@ -164,7 +164,7 @@ export default function ReactorView(props) {
     }
 
     const startReactor = async () => {
-        const startReactor = await fetch(`https://nuclear.dacoder.io/reactors/start-reactor/${id}?apikey=${apiKey}`, {
+        const startReactor = await fetch(`https://nuclear.dacoder.io/reactors/start-reactor/${id}?apiKey=${apiKey}`, {
             method: "POST"
         })
         // Snack log the result
