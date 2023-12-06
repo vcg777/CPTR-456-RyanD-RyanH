@@ -3,6 +3,7 @@ import { Chart } from "chart.js/auto"
 import { useState, useRef, useEffect } from "react"
 
 const MainArea = (props) => {
+    const { reactors, apiKey } = props
     const canvasRef = useRef(null)
     const [pastTemps, setPastTemps] = useState([])
 
@@ -43,8 +44,38 @@ const MainArea = (props) => {
     //     }
     //   }, [data])
 
+    const killAll =  () => {
+        const killAll = reactors.map(reactor => {
+            return (
+                async () => {
+                    const messasge = await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${reactor.id}?apiKey=${apiKey}`)
+                }
+            )
+        })
+    }
+
+    const coolAll =  () => {
+        const coolAll = reactors.map(reactor => {
+            return (
+                async () => {
+                    const messasge = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`)
+                }
+            )
+        })
+    }
+
+    const sleepAll =  () => {
+        const sleepAll = reactors.map(reactor => {
+            return (
+                async () => {
+                    const messasge = await fetch(`https://nuclear.dacoder.io/reactors/controlled-shutdown/${reactor.id}?apiKey=${apiKey}`)
+                }
+            )
+        })
+    }
+
     const reset = async () => {
-        const reset = await fetch(`https://nuclear.dacoder.io/reactors/reset?apikey=${apiKey}`, {
+        const reset = await fetch(`https://nuclear.dacoder.io/reactors/reset?apiKey=${apiKey}`, {
             method: "POST"
         })
         // Snack log the result
@@ -122,6 +153,7 @@ const MainArea = (props) => {
                                     }
                                 }
                                 ]}
+                                onClick={killAll}
                             >
                                 KILL
                             </Button>
@@ -143,6 +175,7 @@ const MainArea = (props) => {
                                     }
                                 }
                                 ]}
+                                onClick={coolAll}
                             >
                                 COOL
                             </Button>
@@ -164,6 +197,7 @@ const MainArea = (props) => {
                                     }
                                 }
                                 ]}
+                                onClick={sleepAll}
                             >
                                 SLEEP
                             </Button>
