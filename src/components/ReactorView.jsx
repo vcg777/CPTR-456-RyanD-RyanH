@@ -34,7 +34,7 @@ export default function ReactorView(props) {
     const [open, setOpen] = useState(false)
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
-    const [selected, setSelected] = useState(false)
+    const [cooling, setCooling] = useState(false)
     const [reactorInfo, setReactorInfo] = useState({})
     const [tempColor, setTempColor] = useState("")
     const [loading, setLoading] = useState(true)
@@ -93,7 +93,14 @@ export default function ReactorView(props) {
 
     const changeCoolantState = async () => {
         const changeCoolantState = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${id}?apiKey=${apiKey}`, {
-            method: "POST"
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                coolant: cooling ? "off" : "on"
+            })
         })
         // Snack log the result
     }
@@ -143,24 +150,25 @@ export default function ReactorView(props) {
     }
 
     const changeStatus = (event) => {
-        const { value } = event.target.value
-        if (value === "active") {
-            startReactor
-        } else if (value === "offline") {
-            controlledShutdown
-        } else if (value === "maintenance") {
-            maintenance
+        console.log(event.target)
+        const value = event.target.value
+        if (value === "Active") {
+            startReactor()
+        } else if (value === "Offline") {
+            controlledShutdown()
+        } else if (value === "Maintenance") {
+            maintenance()
         } else {
-            controlledShutdown
+            controlledShutdown()
         }
-
-        console.log(value)
-        setReactorInfo(prevReactorInfo => {
-            return ({
-                ...prevReactorInfo,
-                reactorState: { value }
-            })
-        })
+        // console.log(value)
+        // setReactorInfo(prevReactorInfo => {
+        //     return ({
+        //         ...prevReactorInfo,
+        //         reactorState: value
+        //     })
+        // })
+        // console.log(reactorInfo.reactorState)
     }
 
     const startReactor = async () => {
@@ -229,10 +237,10 @@ export default function ReactorView(props) {
                                     displayEmpty
                                     renderValue={() => reactorInfo.reactorState}
                                 >
-                                    <MenuItem value="active">Active </MenuItem>
-                                    <MenuItem value="offline">Offline</MenuItem>
-                                    <MenuItem value="maintenance">Maintenance</MenuItem>
-                                    <MenuItem value="emergency-shutdown">Dead</MenuItem>
+                                    <MenuItem value="Active">Active </MenuItem>
+                                    <MenuItem value="Offline">Offline</MenuItem>
+                                    <MenuItem value="Maintenance">Maintenance</MenuItem>
+                                    <MenuItem value="Emergency Shutdown">Dead</MenuItem>
                                 </Select>
                             </Box>
                             <Box sx={{
@@ -266,10 +274,10 @@ export default function ReactorView(props) {
                                 <div className='control-buttons'>
                                     <ToggleButton
                                         value="check"
-                                        selected={selected}
+                                        selected={cooling}
                                         onChange={() => {
-                                            setSelected(!selected)
-                                            changeCoolantState
+                                            setCooling(!cooling)
+                                            changeCoolantState()
                                         }}
                                         sx={[{
                                             height: "6vh",
@@ -390,7 +398,7 @@ export default function ReactorView(props) {
                                         gap: 3,
                                     }}>
                                         <Typography variant='h5'>Inserted</Typography>
-                                        <Typography variant='h4'>150</Typography>
+                                        <Typography variant='h4'>{reactorInfo.rodState.in}</Typography>
                                         <Button sx={[{
                                             height: "6vh",
                                             width: "7vw",
@@ -417,7 +425,7 @@ export default function ReactorView(props) {
                                         gap: 3,
                                     }}>
                                         <Typography variant='h5'>Removed</Typography>
-                                        <Typography variant='h4'>150</Typography>
+                                        <Typography variant='h4'>{reactorInfo.rodState.out}</Typography>
                                         <Button sx={[{
                                             height: "6vh",
                                             width: "7vw",
