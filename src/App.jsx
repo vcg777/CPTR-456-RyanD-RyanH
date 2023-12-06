@@ -35,6 +35,17 @@ function App(props) {
       setLogs(jsonLogs.dynamic_id)
     }
 
+    const getTemperatures = async() => {
+      for (let i = 0; i < length(reactors); i++){
+        const reactorTempRaw = await fetch(`https://nuclear.dacoder.io/reactors/temperature/${reactors[i].id}?apiKey=${apiKey}`)
+        const reactorTempJson = await reactorTempRaw.json()
+        setReactors({
+          ...reactors,
+        })
+
+      }
+    }
+
     getReactors()
 
   }, [])

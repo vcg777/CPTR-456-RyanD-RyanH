@@ -14,9 +14,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "left", vertical: "bottom"}} autoHideDuration={5000}>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<App apiKey={howellApiKey} />} />
-          {/* <Route path='/' element={<App apiKey={downsApiKey} />} /> */}
-          <Route path='/:id' element={<ReactorView apiKey={howellApiKey} />} />
+          {/* <Route path='/' element={<App apiKey={howellApiKey} />} /> */}
+          <Route path='/' element={<App apiKey={downsApiKey} />} />
+          {/* <Route path='/:id' element={<ReactorView apiKey={howellApiKey} />} /> */}
+          <Route path='/:id' element={<ReactorView apiKey={downsApiKey} />} />
+          
         </Routes>
       </BrowserRouter>
     </SnackbarProvider>
