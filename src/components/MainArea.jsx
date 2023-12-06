@@ -6,22 +6,7 @@ const MainArea = (props) => {
     const { reactors, apiKey } = props
     const canvasRef = useRef(null)
     const [pastTemps, setPastTemps] = useState([])
-
-    // useEffect(() => {
-    //     let tempInterval
-
-    //     const getData = async () => {
-    //       const rawTemp = await fetch("http://")
-    //       const jsonTemp = await rawTemp.json()
-    //       setPastTemps(jsonTemp.temperatures_Maybe)
-    //     }
-
-    //     tempInterval = setInterval(getData, 60000)
-
-    //     return () => {
-    //       clearInterval(tempInterval)
-    //     }
-    //   }, [])
+    const [cooling, setCooling] = useState(false)
 
     // useEffect(() => {
     //     const chart = new Chart(canvasRef.current, {
@@ -44,34 +29,36 @@ const MainArea = (props) => {
     //     }
     //   }, [data])
 
-    const killAll =  () => {
-        const killAll = reactors.map(reactor => {
-            return (
-                async () => {
-                    const messasge = await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${reactor.id}?apiKey=${apiKey}`)
-                }
-            )
-        })
+    const killAll = async () => {
+        await Promise.all(reactors.map(async (reactor) => {
+            await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${reactor}?apiKey=${apiKey}`, {
+                method: "POST"
+            })
+        }))
     }
 
-    const coolAll =  () => {
-        const coolAll = reactors.map(reactor => {
-            return (
-                async () => {
-                    const messasge = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`)
-                }
-            )
-        })
+    const coolAll = async () => {
+        await Promise.all(reactors.map(async (reactor) => {
+            await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor}?apiKey=${apiKey}`, {
+                method: "POST",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    coolant: cooling ? "off" : "on"
+                })
+            })
+        }))
+        setCooling(prevCooling => !prevCooling)
     }
 
-    const sleepAll =  () => {
-        const sleepAll = reactors.map(reactor => {
-            return (
-                async () => {
-                    const messasge = await fetch(`https://nuclear.dacoder.io/reactors/controlled-shutdown/${reactor.id}?apiKey=${apiKey}`)
-                }
-            )
-        })
+    const sleepAll = async () => {
+        await Promise.all(reactors.map(async (reactor) => {
+            await fetch(`https://nuclear.dacoder.io/reactors/controlled-shutdown/${reactor}?apiKey=${apiKey}`, {
+                method: "POST"
+            })
+        }))
     }
 
     const reset = async () => {
@@ -239,7 +226,7 @@ const MainArea = (props) => {
                                     }
                                 }
                                 ]}
-                            onClick={reset}
+                                onClick={reset}
                             >
                                 RESET
                             </Button>

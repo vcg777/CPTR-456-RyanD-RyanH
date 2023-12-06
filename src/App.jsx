@@ -54,7 +54,7 @@ function App(props) {
 
   return (
     <main>
-        <MainArea reactors={reactors} apiKey={apiKey} />
+        <MainArea reactors={ids} apiKey={apiKey} />
         <ReactorDisplay id={ids[0]} />
         <ReactorDisplay id={ids[1]} />
         <ReactorDisplay id={ids[2]} />
