@@ -1,12 +1,14 @@
-import { Box, Button, Typography } from "@mui/material"
+import { Box, Button, ToggleButton, Typography } from "@mui/material"
 import { Chart } from "chart.js/auto"
 import { useState, useRef, useEffect } from "react"
 
 const MainArea = (props) => {
-    const { reactors, apiKey } = props
+    const { reactors, apiKey, setReactors } = props
     const canvasRef = useRef(null)
     const [pastTemps, setPastTemps] = useState([])
     const [cooling, setCooling] = useState(false)
+    const [celsius, setCelsius] = useState(true)
+    const [reactorsInfo, setReactorsInfo] = useState({})
 
     // useEffect(() => {
     //     const chart = new Chart(canvasRef.current, {
@@ -29,17 +31,51 @@ const MainArea = (props) => {
     //     }
     //   }, [data])
 
+    useEffect(() => {
+        const getReactorInfo = async () => {
+            const reactorsTemps = await Promise.all(reactors.map(async (reactor) => {
+                const rawTemp = await fetch(`https://nuclear.dacoder.io/reactors/temperature/${reactor.id}?apiKey=${apiKey}`)
+                const jsonTemp = await rawTemp.json()
+                return jsonTemp.temperature
+            }))
+            const reactorsOutputs = await Promise.all(reactors.map(async (reactor) => {
+                const rawOutput = await fetch(`https://nuclear.dacoder.io/reactors/output/${reactor.id}?apiKey=${apiKey}`)
+                const jsonOutput = await rawOutput.json()
+                return jsonOutput
+            }))
+            const avgTemp = reactorsTemps.reduce((accumulator, temp) => -(-accumulator - temp.amount) / reactorsTemps.length, 0)
+            const totalOutput = reactorsOutputs.reduce((accumulator, temp) => accumulator + temp, 0)
+            // const rawCoolant = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`)
+            // const jsonCoolant = await rawCoolant.json()
+            setReactorsInfo({
+                ...reactorsInfo,
+                avgTemp: avgTemp,
+                totalOutput: totalOutput
+            })
+            setCelsius(reactorsTemps[0].unit === "celsius")
+
+        }
+        getReactorInfo()
+
+        const dataInterval = setInterval(getReactorInfo, 500)
+
+        return () => {
+            clearInterval(dataInterval)
+        }
+
+    }, [])
+
     const killAll = async () => {
-        await Promise.all(reactors.map(async (reactor) => {
-            await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${reactor}?apiKey=${apiKey}`, {
+        {
+            await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${reactor.id}?apiKey=${apiKey}`, {
                 method: "POST"
             })
-        }))
+        }
     }
 
     const coolAll = async () => {
-        await Promise.all(reactors.map(async (reactor) => {
-            await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor}?apiKey=${apiKey}`, {
+        {
+            await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`, {
                 method: "POST",
                 headers: {
                     Accept: "application/json",
@@ -49,22 +85,23 @@ const MainArea = (props) => {
                     coolant: cooling ? "off" : "on"
                 })
             })
-        }))
+        }
         setCooling(prevCooling => !prevCooling)
     }
 
     const sleepAll = async () => {
-        await Promise.all(reactors.map(async (reactor) => {
-            await fetch(`https://nuclear.dacoder.io/reactors/controlled-shutdown/${reactor}?apiKey=${apiKey}`, {
+        {
+            await fetch(`https://nuclear.dacoder.io/reactors/controlled-shutdown/${reactor.id}?apiKey=${apiKey}`, {
                 method: "POST"
             })
-        }))
+        }
     }
 
     const reset = async () => {
         const reset = await fetch(`https://nuclear.dacoder.io/reactors/reset?apiKey=${apiKey}`, {
             method: "POST"
         })
+        setReactors([])
         // Snack log the result
     }
 
@@ -89,7 +126,10 @@ const MainArea = (props) => {
                 }}>
                     <div className="totals-area">
                         <Typography variant="h6" sx={{ textDecoration: "underline", fontSize: 15 }}>Avg. Temp</Typography>
-                        <Typography variant="h4" sx={{ color: "#bfd7ea", fontSize: 25 }}>25°C</Typography>
+                        <Typography variant="h4" sx={{ color: "#bfd7ea", fontSize: 25 }}>
+                            {reactorsInfo.avgTemp}
+                            {celsius ? "°C" : "K"}
+                        </Typography>
                     </div>
                     <Typography variant="h6" sx={{
                         width: "20vw",
@@ -144,8 +184,10 @@ const MainArea = (props) => {
                             >
                                 KILL
                             </Button>
-                            <Button
-                                variant="contained"
+                            <ToggleButton
+                                value="check"
+                                selected={cooling}
+                                onChange={coolAll}
                                 sx={[{
                                     height: "6vh",
                                     borderRadius: "15px",
@@ -158,14 +200,14 @@ const MainArea = (props) => {
                                 },
                                 {
                                     '&:hover': {
-                                        backgroundColor: "#3b95de"
+                                        backgroundColor: "#0b3954",
+                                        color: "#fefffe",
                                     }
                                 }
                                 ]}
-                                onClick={coolAll}
                             >
                                 COOL
-                            </Button>
+                            </ToggleButton>
                             <Button
                                 variant="contained"
                                 sx={[{
@@ -190,7 +232,7 @@ const MainArea = (props) => {
                             </Button>
                         </div>
                         <div className="main-buttons">
-                            <Button sx={[{
+                            {/* <Button sx={[{
                                 height: "6vh",
                                 width: "150px",
                                 backgroundColor: "#0b3954",
@@ -205,9 +247,12 @@ const MainArea = (props) => {
                                 }
                             }]}
                                 variant="contained"
+                                onClick={() => {
+                                    setSeeSysLogs(prevSeeSysLogs => !prevSeeSysLogs)
+                                }}
                             >
                                 SYSTEM LOGS
-                            </Button>
+                            </Button> */}
                             <Button
                                 variant="contained"
                                 sx={[{
