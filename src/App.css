@@ -150,3 +150,15 @@ button {
   width: 35vw;
   justify-content: space-evenly;
 }
+
+fieldset.MuiOutlinedInput-notchedOutline {
+  border-color: #cacaca;
+}
+
+div.MuiOutlinedInput-root {
+  color: rgba(0, 255, 0, 0.87);
+}
+
+label.MuiFormLabel-root {
+  color: #cacaca;
+}

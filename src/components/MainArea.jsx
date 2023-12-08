@@ -1,6 +1,18 @@
 import { Box, Button, TextField, ToggleButton, Typography } from "@mui/material"
 import { Chart } from "chart.js/auto"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import debounce from "lodash.debounce";
+import _ from "lodash";
+
+const theme = createTheme({
+    palette: {
+        info: {
+            main: '#cacaca',
+        },
+    },
+});
+
 
 const MainArea = (props) => {
     const { reactors, apiKey, setReactors } = props
@@ -113,7 +125,7 @@ const MainArea = (props) => {
 
     const handlePlantNameChange = async (event) => {
         const { value } = event.target
-        const nameChange = await fetch(`https://nuclear.dacoder.io/reactors/plant-name`, {
+        const nameChange = await fetch(`https://nuclear.dacoder.io/reactors/plant-name?apiKey=${apiKey}`, {
             method: "PUT",
             headers: {
                 Accept: "application/json",
@@ -125,8 +137,17 @@ const MainArea = (props) => {
         })
     }
 
+    // const debouncedChangeHandler = useMemo(
+    //     () => debounce(handlePlantNameChange, 300)
+    //     , [reactorsInfo])
+
+    // useEffect(() => {
+    //     return () => {
+    //         debouncedChangeHandler.cancel();
+    //     }
+    // }, [])
     return (
-        <>
+        <ThemeProvider theme={theme}>
             <Box sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -152,21 +173,30 @@ const MainArea = (props) => {
                         </Typography>
                     </div>
                     {!edit && (
-                    <Typography variant="h6" sx={{
-                        width: "20vw",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center"
-                    }}>
-                        {reactorsInfo.plantName}
-                    </Typography>
+                        <Typography variant="h6" sx={{
+                            width: "20vw",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}>
+                            {reactorsInfo.plantName}
+                        </Typography>
                     )}
                     {edit && (
                         <TextField
-                            sx={{ width: "20vw" }}
+                            style={{
+                                width: "20vw",
+                                borderRadius: "5px",
+                            }}
+                            color="info"
+                            inputProps={{
+                                style: {
+                                    color: "white",
+                                }
+                            }}
                             label={reactorsInfo.plantName}
-                            value=""
-                            onChange={handlePlantNameChange}
+                            value={reactorsInfo.plantName}
+                            onChange={debounce(handlePlantNameChange, 300)}
                         />
                     )}
                     <div className="totals-area">
@@ -312,17 +342,18 @@ const MainArea = (props) => {
                                     borderRadius: "15px",
                                     width: "150px",
                                     fontSize: 15,
-                                    backgroundColor: "info.main",
+                                    backgroundColor: "#29b6f6",
                                     color: "#1b1212",
                                     border: 4,
                                     borderColor: "#a5a5a5",
                                 },
                                 {
                                     '&:hover': {
-                                        backgroundColor: "info.light"
+                                        backgroundColor: "#4fc3f7"
                                     }
                                 }
                                 ]}
+                                onClick={() => setEdit(prevEdit => !prevEdit)}
                             >
                                 EDIT
                             </Button>
@@ -339,7 +370,7 @@ const MainArea = (props) => {
                     {/* <canvas ref={canvasRef}></canvas> */}
                 </Box>
             </Box>
-        </>
+        </ThemeProvider>
     )
 }
 
