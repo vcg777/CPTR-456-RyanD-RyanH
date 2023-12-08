@@ -62,7 +62,7 @@ function App(props) {
       />
 
       {reactors.map(reactor => {
-        return <ReactorDisplay key={reactor.id} id={reactor.id} />
+        return <ReactorDisplay key={reactor.id} id={reactor.id} apiKey={apiKey} />
       })}
 
       

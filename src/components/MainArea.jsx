@@ -1,4 +1,4 @@
-import { Box, Button, ToggleButton, Typography } from "@mui/material"
+import { Box, Button, TextField, ToggleButton, Typography } from "@mui/material"
 import { Chart } from "chart.js/auto"
 import { useState, useRef, useEffect } from "react"
 
@@ -7,6 +7,7 @@ const MainArea = (props) => {
     const canvasRef = useRef(null)
     const [pastTemps, setPastTemps] = useState([])
     const [cooling, setCooling] = useState(false)
+    const [edit, setEdit] = useState(false)
     const [celsius, setCelsius] = useState(true)
     const [reactorsInfo, setReactorsInfo] = useState({})
 
@@ -33,27 +34,32 @@ const MainArea = (props) => {
 
     useEffect(() => {
         const getReactorInfo = async () => {
+            const rawTitle = await fetch(`https://nuclear.dacoder.io/reactors?apiKey=${apiKey}`)
+            const jsonTitle = await rawTitle.json()
+
             const reactorsTemps = await Promise.all(reactors.map(async (reactor) => {
                 const rawTemp = await fetch(`https://nuclear.dacoder.io/reactors/temperature/${reactor.id}?apiKey=${apiKey}`)
                 const jsonTemp = await rawTemp.json()
                 return jsonTemp.temperature
             }))
+
             const reactorsOutputs = await Promise.all(reactors.map(async (reactor) => {
                 const rawOutput = await fetch(`https://nuclear.dacoder.io/reactors/output/${reactor.id}?apiKey=${apiKey}`)
                 const jsonOutput = await rawOutput.json()
                 return jsonOutput
             }))
+
             const avgTemp = reactorsTemps.reduce((accumulator, temp) => -(-accumulator - temp.amount) / reactorsTemps.length, 0)
             const totalOutput = reactorsOutputs.reduce((accumulator, temp) => accumulator + temp, 0)
             // const rawCoolant = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`)
             // const jsonCoolant = await rawCoolant.json()
             setReactorsInfo({
                 ...reactorsInfo,
+                plantName: jsonTitle.plant_name,
                 avgTemp: avgTemp,
                 totalOutput: totalOutput
             })
-            setCelsius(reactorsTemps[0].unit === "celsius")
-
+            // setCelsius(reactorsTemps[0].unit === "celsius")
         }
         getReactorInfo()
 
@@ -66,15 +72,15 @@ const MainArea = (props) => {
     }, [])
 
     const killAll = async () => {
-        {
+        await Promise.all(reactors.map(async (reactor) => {
             await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${reactor.id}?apiKey=${apiKey}`, {
                 method: "POST"
             })
-        }
+        }))
     }
 
     const coolAll = async () => {
-        {
+        await Promise.all(reactors.map(async (reactor) => {
             await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`, {
                 method: "POST",
                 headers: {
@@ -85,16 +91,16 @@ const MainArea = (props) => {
                     coolant: cooling ? "off" : "on"
                 })
             })
-        }
+        }))
         setCooling(prevCooling => !prevCooling)
     }
 
     const sleepAll = async () => {
-        {
+        await Promise.all(reactors.map(async (reactor) => {
             await fetch(`https://nuclear.dacoder.io/reactors/controlled-shutdown/${reactor.id}?apiKey=${apiKey}`, {
                 method: "POST"
             })
-        }
+        }))
     }
 
     const reset = async () => {
@@ -103,6 +109,20 @@ const MainArea = (props) => {
         })
         setReactors([])
         // Snack log the result
+    }
+
+    const handlePlantNameChange = async (event) => {
+        const { value } = event.target
+        const nameChange = await fetch(`https://nuclear.dacoder.io/reactors/plant-name`, {
+            method: "PUT",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: value
+            })
+        })
     }
 
     return (
@@ -131,17 +151,27 @@ const MainArea = (props) => {
                             {celsius ? "°C" : "K"}
                         </Typography>
                     </div>
+                    {!edit && (
                     <Typography variant="h6" sx={{
                         width: "20vw",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center"
                     }}>
-                        The Power Plant
+                        {reactorsInfo.plantName}
                     </Typography>
+                    )}
+                    {edit && (
+                        <TextField
+                            sx={{ width: "20vw" }}
+                            label={reactorsInfo.plantName}
+                            value=""
+                            onChange={handlePlantNameChange}
+                        />
+                    )}
                     <div className="totals-area">
                         <Typography variant="h6" sx={{ textDecoration: "underline", fontSize: 15 }}>Total Output</Typography>
-                        <Typography variant="h4" sx={{ fontSize: 25 }}>1.3 GW</Typography>
+                        <Typography variant="h4" sx={{ fontSize: 25 }}>{reactorsInfo.totalOutput} MW</Typography>
                     </div>
 
                 </Box>
