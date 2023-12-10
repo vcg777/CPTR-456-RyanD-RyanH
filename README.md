@@ -7,6 +7,7 @@ This project is a nuclear power simulator done in [React](https://react.dev/) wh
 
 ## Dependencies
 
- * [Chart.js](https://www.chartjs.org/) - used for the graphical depictions of reactor temperatures
- * [Material UI](https://mui.com/material-ui/) - used for UI elements
- * [notisstack](https://notistack.com/) - used for notifications from the server
+ * [Chart.js](https://www.chartjs.org/) - is used for the graphical depictions of reactor temperatures
+ * [Material UI](https://mui.com/material-ui/) - is used for UI elements
+ * [notisstack](https://notistack.com/) - is used for notifications from the server
+ * [Roboto](https://fonts.google.com/specimen/Roboto?preview.text=l) - is the preferred font, used by Material UI componentsf
