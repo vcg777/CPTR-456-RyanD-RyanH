@@ -79,7 +79,7 @@ export default function ReactorView(props) {
             })
             let newData = outputData
             newData.push(jsonTemp.temperature.amount)
-            setOutputData(newData.slice(-201))
+            setOutputData(newData.slice(-601))
 
             const logsRaw = await fetch(`https://nuclear.dacoder.io/reactors/logs?apiKey=${apiKey}`)
             const jsonLogs = await logsRaw.json()
@@ -375,17 +375,21 @@ export default function ReactorView(props) {
                             }}>
                                 <Typography variant='h5'>Control Panel</Typography>
                                 <div className='control-buttons'>
-                                    <ToggleButton
-                                        value="check"
-                                        selected={reactorInfo.coolant === "on"}
+                                    <div>
+                                    <Typography variant="Body1">Cooling: </Typography>
+                                    <Button
+                                        // value="check"
+                                        // selected={reactorInfo.coolant === "on"}
                                         onClick={changeCoolantState}
+                                        // backgroundColor="White"
                                         sx={[{
+                                            // color={value === "check" ? "success" : "disabled"}
                                             height: "6vh",
                                             borderRadius: "15px",
                                             width: "75px",
                                             fontSize: 13,
-                                            backgroundColor: "#bfd7ea",
-                                            color: "#1b1212",
+                                            backgroundColor: "#0b3954",
+                                            color: "#fefffe",
                                             border: 4,
                                             borderColor: "#a5a5a5",
                                         },
@@ -397,8 +401,9 @@ export default function ReactorView(props) {
                                         }
                                         ]}
                                     >
-                                        COOL
-                                    </ToggleButton>
+                                        {reactorInfo.coolant}
+                                    </Button>
+                                    </div>
                                     <IconButton
                                         sx={[{
                                             height: "6vh",
