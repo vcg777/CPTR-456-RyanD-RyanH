@@ -145,7 +145,7 @@ export default function ReactorView(props) {
             })
         })
         const response = changeCoolantState.json()
-        changeCoolantState.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar(`Coolant is now ${reactorInfo.coolant}`, { variant: "success" })
+        changeCoolantState.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar(`Coolant is now ${reactorInfo.coolant === "on" ? "off" : "on"}`, { variant: "success" })
     }
 
     const dropRod = async () => {
@@ -250,16 +250,16 @@ export default function ReactorView(props) {
         <>
             {!loading && (
                 <ThemeProvider theme={theme}>
-                    <h1>{JSON.stringify(reactorInfo, null, 2)}</h1>
                     <Box sx={{
                         width: "100vw",
-                        height: "100vh",
+                        height: "fit-content",
                         bgcolor: '#242424',
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        gap: "3vh"
-                    }}>
+                    }}
+                    className="reactor-sections"
+                    >
                         <div className='reactor-page reactor-top'>
                             <Box sx={{
                                 display: "flex",
@@ -268,7 +268,9 @@ export default function ReactorView(props) {
                                 justifyContent: "space-evenly",
                                 width: "100vw",
                                 height: "40vh",
-                            }}>
+                            }}
+                            className="name-pic-state"
+                            >
                                 <div className='name-area'>
                                     <div className='spacer'></div>
                                     {!edit && <Typography variant='h5' sx={{ padding: 1 }}>{reactorInfo.name}</Typography>}
@@ -381,6 +383,7 @@ export default function ReactorView(props) {
                                         // value="check"
                                         // selected={reactorInfo.coolant === "on"}
                                         onClick={changeCoolantState}
+                                        disabled={!(reactorInfo.reactorState === "Active")}
                                         // backgroundColor="White"
                                         sx={[{
                                             // color={value === "check" ? "success" : "disabled"}
@@ -478,7 +481,9 @@ export default function ReactorView(props) {
                                 height: "55vh",
                                 borderLeft: "1px solid #fefffe",
 
-                            }}>
+                            }}
+                            className="right-side"
+                            >
                                 <Typography variant='h5'>Temperature</Typography>
                                 <div className='temp-data'>
                                     <Typography variant='h4' sx={{ color: "#bfd7ea" }}>

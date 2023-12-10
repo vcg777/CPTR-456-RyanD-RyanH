@@ -37,7 +37,7 @@ const MainArea = (props) => {
             data: {
                 labels: avgTemps.map((_, index) => index),
                 datasets: [{
-                    label: "Temperature (°C)",
+                    label: "Temperature",
                     data: avgTemps,
                     borderWidth: 2,
                 }]
@@ -203,7 +203,9 @@ const MainArea = (props) => {
                     width: "100vw",
                     alignItems: "center",
                     justifyContent: "space-evenly",
-                }}>
+                }}
+                className="total-stats"
+                >
                     <div className="totals-area">
                         <Typography variant="h6" sx={{ textDecoration: "underline", fontSize: 15 }}>Avg. Temp</Typography>
                         <Typography variant="h4" sx={{ color: "#bfd7ea", fontSize: 25 }}>
@@ -260,7 +262,9 @@ const MainArea = (props) => {
                         gap: "5vh",
                         justifyContent: "space-around",
                         width: "80vw",
-                    }}>
+                    }}
+                    className="buttons-box"
+                    >
                         <div className="main-buttons">
                             <Button
                                 variant="contained"
@@ -304,6 +308,7 @@ const MainArea = (props) => {
                                     }
                                 }
                                 ]}
+                                className="cool-all-button"
                             >
                                 Cool All: {cooling ? "On" : "Off"}
                             </Button>
@@ -403,10 +408,9 @@ const MainArea = (props) => {
                     </Box>
                 </Box>
                 <Box sx={{
-                    height: "30vh",
+                    height: "21vw",
                     width: "40vw",
                     margin: "40px 0 30px",
-                    backgroundColor: "white",
                 }}>
                     <canvas ref={canvasRef}></canvas>
                 </Box>

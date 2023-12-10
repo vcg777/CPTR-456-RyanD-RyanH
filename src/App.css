@@ -57,11 +57,25 @@ button {
   background-color: #1b1b1b;
 }
 
+@media (max-width : 900px) {
+  .reactor-display {
+    flex-direction: column;
+    gap: 30px;
+  }
+}
+
 .reactor-info {
   display: flex;
   width: 40vw;
   justify-content: space-around;
   align-items: center;
+}
+
+@media (max-width : 900px) {
+  .reactor-info {
+    flex-direction: column;
+    gap: 30px;
+  }
 }
 
 .temp-display {
@@ -89,6 +103,35 @@ button {
   gap: 7vh;
 }
 
+@media (max-width : 590px) {
+  .main-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 5vh;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width : 590px) {
+  div.MuiBox-root {
+    flex-direction: column;
+    height: fit-content;
+  }
+}
+
+@media (max-width : 590px) {
+  .total-stats {
+    gap: 30px;
+  }
+}
+
+@media (max-width : 590px) {
+  .cool-all-button {
+    width: 150px;
+  }
+}
+
+
 /* Reactor Page */
 
 .reactor-page {
@@ -101,11 +144,30 @@ button {
   height: 28vh;
 }
 
+@media (max-width : 900px) {
+  .reactor-sections {
+    gap: 35vh;
+  }
+}
+
 .reactor-top {
   height: 40vh;
   width: 100vw;
   display: flex;
   align-items: center;
+}
+
+@media (max-width : 900px) {
+  .reactor-top {
+    flex-direction: column;
+    gap: 30px;
+  }
+}
+
+@media (max-width : 900px) {
+  .name-pic-state {
+    gap: 8px;
+  }
 }
 
 .spacer {
@@ -119,13 +181,6 @@ button {
   justify-content: space-between;
 }
 
-.canvas-understudy {
-  background-color: white;
-  margin-top: 47px;
-  width: 30vw;
-  height: 25vh;
-}
-
 .output-words {
   display: flex;
   align-items: center;
@@ -137,16 +192,30 @@ button {
   width: 100vw;
 }
 
+@media (max-width : 900px) {
+  .reactor-bottom {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+@media (max-width : 900px) {
+  .css-12evn0d {
+    gap: 18px;
+  }
+}
+
 .control-buttons {
   display: flex;
   width: 35vw;
   justify-content: space-evenly;
 }
 
-/* .Mui-selected {
-  background: #0b3954;
-  color: #fefffe;
-} */
+@media (max-width : 900px) {
+  div.css-1sp4wh6 {
+    border-left: none;
+  }
+}
 
 .temp-data,
 .rods-data {
