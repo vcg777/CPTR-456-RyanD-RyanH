@@ -40,7 +40,7 @@ const ReactorDisplay = (props) => {
                 <img src={standIn} />
             </div>
             <div className="reactor-info">
-                <TempDisplay />
+                <TempDisplay id={id} apiKey={apiKey} />
                 <Typography variant="h4">{reactorInfo.name}</Typography>
             </div>
         </button>

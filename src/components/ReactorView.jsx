@@ -283,7 +283,7 @@ export default function ReactorView(props) {
                                 <div className='canvas-understudy'></div> {/* This is representing the graph for styling purposes */}
                                 <div className='output-words'>
                                     <Typography variant='h5'>OUTPUT:</Typography>
-                                    <Typography variant='h4'>{reactorInfo.output.amount}</Typography>
+                                    <Typography variant='h4'>{reactorInfo.output.amount.toFixed(2)}</Typography>
                                     <Typography variant='h5'>MW</Typography>
                                 </div>
 
@@ -303,7 +303,7 @@ export default function ReactorView(props) {
                                     <ToggleButton
                                         value="check"
                                         selected={reactorInfo.coolant === "on"}
-                                        onChange={changeCoolantState}
+                                        onClick={changeCoolantState}
                                         sx={[{
                                             height: "6vh",
                                             borderRadius: "15px",
@@ -402,7 +402,7 @@ export default function ReactorView(props) {
                                 <Typography variant='h5'>Temperature</Typography>
                                 <div className='temp-data'>
                                     <Typography variant='h4' sx={{ color: "#bfd7ea" }}>
-                                        {reactorInfo.temperature.amount}
+                                        {reactorInfo.temperature.amount.toFixed(2)}
                                         {reactorInfo.temperature.unit === "celsius" ? "°C" : "K"}
                                     </Typography>
                                     <Typography

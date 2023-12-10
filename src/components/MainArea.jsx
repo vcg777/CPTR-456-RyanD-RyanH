@@ -3,7 +3,6 @@ import { Chart } from "chart.js/auto"
 import { useState, useRef, useEffect, useMemo } from "react"
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import debounce from "lodash.debounce";
-import _ from "lodash";
 
 const theme = createTheme({
     palette: {
@@ -22,6 +21,7 @@ const MainArea = (props) => {
     const [edit, setEdit] = useState(false)
     const [celsius, setCelsius] = useState(true)
     const [reactorsInfo, setReactorsInfo] = useState({})
+    const [loading, setLoading] = useState(true)
 
     // useEffect(() => {
     //     const chart = new Chart(canvasRef.current, {
@@ -44,6 +44,8 @@ const MainArea = (props) => {
     //     }
     //   }, [data])
 
+
+
     useEffect(() => {
         const getReactorInfo = async () => {
             const rawTitle = await fetch(`https://nuclear.dacoder.io/reactors?apiKey=${apiKey}`)
@@ -60,18 +62,24 @@ const MainArea = (props) => {
                 const jsonOutput = await rawOutput.json()
                 return jsonOutput
             }))
+            setLoading(false)
 
-            const avgTemp = reactorsTemps.reduce((accumulator, temp) => -(-accumulator - temp.amount) / reactorsTemps.length, 0)
-            const totalOutput = reactorsOutputs.reduce((accumulator, temp) => accumulator + temp, 0)
-            // const rawCoolant = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`)
-            // const jsonCoolant = await rawCoolant.json()
-            setReactorsInfo({
-                ...reactorsInfo,
-                plantName: jsonTitle.plant_name,
-                avgTemp: avgTemp,
-                totalOutput: totalOutput
-            })
-            // setCelsius(reactorsTemps[0].unit === "celsius")
+            // if (!loading) {
+                const totalTemp = reactorsTemps.reduce((accumulator, temp) => -(-accumulator - temp.amount), 0)
+                const avgTemp = (totalTemp / reactorsTemps.length).toFixed(2)
+                const totalOutputMW = reactorsOutputs.reduce((accumulator, outputData) => accumulator + outputData.output.amount, 0)
+                const totalOutputGW = (totalOutputMW / 1000).toFixed(3)
+
+                // console.log(true)
+                // const rawCoolant = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`)
+                // const jsonCoolant = await rawCoolant.json()
+                setReactorsInfo({
+                    ...reactorsInfo,
+                    plantName: jsonTitle.plant_name,
+                    avgTemp: avgTemp,
+                    totalOutput: totalOutputGW
+                })
+            // }
         }
         getReactorInfo()
 
@@ -83,6 +91,10 @@ const MainArea = (props) => {
 
     }, [])
 
+    useEffect(() => {
+        console.log(true)
+    }, [reactorsInfo.avgTemp])
+
     const killAll = async () => {
         await Promise.all(reactors.map(async (reactor) => {
             await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${reactor.id}?apiKey=${apiKey}`, {
@@ -92,7 +104,7 @@ const MainArea = (props) => {
     }
 
     const coolAll = async () => {
-        await Promise.all(reactors.map(async (reactor) => {
+        const coolAll = await Promise.all(reactors.map(async (reactor) => {
             await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`, {
                 method: "POST",
                 headers: {
@@ -139,7 +151,7 @@ const MainArea = (props) => {
 
     // const debouncedChangeHandler = useMemo(
     //     () => debounce(handlePlantNameChange, 300)
-    //     , [reactorsInfo])
+    //     , [])
 
     // useEffect(() => {
     //     return () => {
@@ -201,7 +213,7 @@ const MainArea = (props) => {
                     )}
                     <div className="totals-area">
                         <Typography variant="h6" sx={{ textDecoration: "underline", fontSize: 15 }}>Total Output</Typography>
-                        <Typography variant="h4" sx={{ fontSize: 25 }}>{reactorsInfo.totalOutput} MW</Typography>
+                        <Typography variant="h4" sx={{ fontSize: 25 }}>{reactorsInfo.totalOutput} GW</Typography>
                     </div>
 
                 </Box>
