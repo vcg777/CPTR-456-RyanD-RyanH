@@ -83,7 +83,6 @@ export default function ReactorView(props) {
         }
         getReactorInfo()
 
-
         const dataInterval = setInterval(getReactorInfo, 500)
 
         return () => {
@@ -99,7 +98,7 @@ export default function ReactorView(props) {
             data: {
                 labels: outputData.map((datum, index) => index),
                 datasets: [{
-                    label: "Number",
+                    label: "Temperature",
                     data: outputData,
                     borderWidth: 2,
                 },]
