@@ -1,5 +1,8 @@
 # Nuclear Power Simulator
 [Ryan Downs](https://github.com/a7wx) & [Ryan Howell](https://github.com/vcg777)
+CPTR-456
+12/10/2023
+Last edit - Media queries for mobile view
 
 ## Overview
 
