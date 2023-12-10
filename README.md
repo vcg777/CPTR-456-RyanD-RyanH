@@ -1,8 +1,13 @@
-# React + Vite
+# Nuclear Power Simulator
+[Ryan Downs](https://github.com/a7wx) & [Ryan Howell](https://github.com/vcg777)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+This project is a nuclear power simulator done in [React](https://react.dev/) where the user manages several nuclear reactors.  It was done as part of CPTR 456 during the fall 2023 semester.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Dependencies
+
+ * [Chart.js](https://www.chartjs.org/) - is used for the graphical depictions of reactor temperatures
+ * [Material UI](https://mui.com/material-ui/) - is used for UI elements
+ * [notisstack](https://notistack.com/) - is used for notifications from the server
+ * [Roboto](https://fonts.google.com/specimen/Roboto?preview.text=l) - is the preferred font, used by Material UI componentsf

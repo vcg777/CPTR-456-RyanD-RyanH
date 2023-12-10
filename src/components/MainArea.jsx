@@ -2,7 +2,6 @@ import { Box, Button, TextField, ToggleButton, Typography } from "@mui/material"
 import { Chart } from "chart.js/auto"
 import { useState, useRef, useEffect, useMemo } from "react"
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import debounce from "lodash.debounce";
 import { useSnackbar } from "notistack";
 
 const theme = createTheme({
