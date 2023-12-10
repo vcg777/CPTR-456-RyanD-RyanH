@@ -10,6 +10,7 @@ import { Chart } from "chart.js/auto"
 
 
 import standIn from "../images/stand-in.jpg"
+import { enqueueSnackbar } from 'notistack';
 
 const style = {
     position: 'absolute',
@@ -143,42 +144,48 @@ export default function ReactorView(props) {
                 coolant: reactorInfo.coolant === "on" ? "off" : "on"
             })
         })
-        // Snack log the result
+        const response = changeCoolantState.json()
+        changeCoolantState.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar(`Coolant is now ${reactorInfo.coolant}`, { variant: "success" })
     }
 
     const dropRod = async () => {
         const dropRod = await fetch(`https://nuclear.dacoder.io/reactors/drop-rod/${id}?apiKey=${apiKey}`, {
             method: "POST"
         })
-        // Snack log the result
+        const response = dropRod.json()
+        dropRod.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar(`Rod down`, { variant: "success" })
     }
 
     const raiseRod = async () => {
         const raiseRod = await fetch(`https://nuclear.dacoder.io/reactors/raise-rod/${id}?apiKey=${apiKey}`, {
             method: "POST"
         })
-        // Snack log the result
+        const response = raiseRod.json()
+        raiseRod.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar("Rod up", { variant: "success" })
     }
 
     const emergencyShutdown = async () => {
         const emergencyShutdown = await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${id}?apiKey=${apiKey}`, {
             method: "POST"
         })
-        // Snack log the result
+        const response = emergencyShutdown.json()
+        emergencyShutdown.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar("DIE DIE DIE DIE", { variant: "success" })
     }
 
     const controlledShutdown = async () => {
         const controlledShutdown = await fetch(`https://nuclear.dacoder.io/reactors/controlled-shutdown/${id}?apiKey=${apiKey}`, {
             method: "POST"
         })
-        // Snack log the result
+        const response = controlledShutdown.json()
+        controlledShutdown.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar("GoToSleep GoToSleep GoToSleep", { variant: "success" })
     }
 
     const maintenance = async () => {
         const maintenance = await fetch(`https://nuclear.dacoder.io/reactors/maintenance/${id}?apiKey=${apiKey}`, {
             method: "POST"
         })
-        // Snack log the result
+        const response = maintenance.json()
+        maintenance.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar("Under repair", { variant: "success" })
     }
 
     const refuel = async () => {
@@ -187,7 +194,8 @@ export default function ReactorView(props) {
             method: "POST"
         })
         maintenance
-        // Snack log the result
+        const response = refuel.json()
+        refuel.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar("Guzzling that go-go juice", { variant: "success" })
     }
 
     const changeStatus = (event) => {
@@ -216,7 +224,8 @@ export default function ReactorView(props) {
         const startReactor = await fetch(`https://nuclear.dacoder.io/reactors/start-reactor/${id}?apiKey=${apiKey}`, {
             method: "POST"
         })
-        // Snack log the result
+        const response = startReactor.json()
+        startReactor.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar("Hello. Who am I? What is my purpose?", { variant: "success" })
     }
 
     const handleReactorNameChange = async () => {
@@ -231,6 +240,8 @@ export default function ReactorView(props) {
                     name: tempReactorName
                 })
             })
+            const response = nameChange.json()
+            nameChange.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar(`This reactor's name is now ${tempReactorName}`, { variant: "success" })
         }
         setTempReactorName(reactorInfo.reactorName)
     }
@@ -539,10 +550,10 @@ export default function ReactorView(props) {
                             </Box>
                         </div>
                     </Box >
-        { seeSysLogs && (
-            <SystemLogs key={id} id={id} logs={logs} />
-        )
-}
+                    {seeSysLogs && (
+                        <SystemLogs key={id} id={id} logs={logs} />
+                    )
+                    }
 
                 </ThemeProvider >
             )

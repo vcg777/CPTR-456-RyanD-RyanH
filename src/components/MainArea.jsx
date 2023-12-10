@@ -112,7 +112,8 @@ const MainArea = (props) => {
             const killMessage = await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${reactor.id}?apiKey=${apiKey}`, {
                 method: "POST"
             })
-            killMessage.status === 400 ? enqueueSnackbar(killMessage.message, { variant: "error" }) : enqueueSnackbar(`${reactor.name} died a tragic death`, { variant: "success" })
+            const response = killMessage.json()
+            killMessage.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar(`${reactor.name} died a tragic death`, { variant: "success" })
         }))
     }
 
@@ -128,7 +129,8 @@ const MainArea = (props) => {
                     coolant: cooling ? "off" : "on"
                 })
             })
-            coolMessage.status === 400 ? enqueueSnackbar(coolMessage.message, { variant: "error" }) : enqueueSnackbar(`${reactor.name} is ${!cooling ? "chilling out" : "fired up"}`, { variant: "success" })
+            const response = coolMessage.json()
+            coolMessage.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar(`${reactor.name} is ${!cooling ? "chilling out" : "fired up"}`, { variant: "success" })
         }))
         setCooling(prevCooling => !prevCooling)
     }
@@ -138,7 +140,8 @@ const MainArea = (props) => {
             const sleepMessage = await fetch(`https://nuclear.dacoder.io/reactors/controlled-shutdown/${reactor.id}?apiKey=${apiKey}`, {
                 method: "POST"
             })
-            sleepMessage.status === 400 ? enqueueSnackbar(sleepMessage.message, { variant: "error" }) : enqueueSnackbar(`${reactor.name} is out to lunch`, { variant: "success" })
+            const response = sleepMessage.json()
+            sleepMessage.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar(`${reactor.name} is out to lunch`, { variant: "success" })
         }))
     }
 
@@ -147,7 +150,8 @@ const MainArea = (props) => {
             method: "POST"
         })
         setReactors([])
-        resetMessage.status === 400 ? enqueueSnackbar(resetMessage.message, { variant: "error" }) : enqueueSnackbar("Have another go", { variant: "success" })
+        const response = resetMessage.json()
+        resetMessage.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar("Have another go", { variant: "success" })
     }
 
     const handlePlantNameChange = async () => {
@@ -162,6 +166,8 @@ const MainArea = (props) => {
                     name: tempPlantName
                 })
             })
+            const response = nameChange.json()
+            nameChange.status === 400 ? response.message.map(item => enqueueSnackbar(item, { variant: "error" })) : enqueueSnackbar(`The plant is now named ${tempPlantName}`, { variant: "success" })
         }
         setTempPlantName(reactorsInfo.plantName)
     }
