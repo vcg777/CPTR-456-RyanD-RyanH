@@ -20,29 +20,31 @@ const MainArea = (props) => {
     const [cooling, setCooling] = useState(false)
     const [edit, setEdit] = useState(false)
     const [celsius, setCelsius] = useState(true)
-    const [reactorsInfo, setReactorsInfo] = useState({})
+    const [reactorsInfo, setReactorsInfo] = useState({}) //Stores general info about the reactors
     const [loading, setLoading] = useState(true)
+    const [avgTemps, setAvgTemps] = useState([]) //Stores the average temps for the chart
+    const [tempPlantName, setTempPlantName] = useState("")
 
-    // useEffect(() => {
-    //     const chart = new Chart(canvasRef.current, {
-    //       type: "line",
-    //       data: {
-    //         labels: pastTemps.map((_, index) => index),
-    //         datasets: [{
-    //           label: "Temperature (°C)",
-    //           data: [...pastTemps],
-    //           borderWidth: 2,
-    //         }]
-    //       },
-    //       options: {
-    //         animation: false,
-    //       }
-    //     })
+    useEffect(() => {
+        const chart = new Chart(canvasRef.current, {
+            type: "line",
+            data: {
+                labels: avgTemps.map((_, index) => index),
+                datasets: [{
+                    label: "Temperature (°C)",
+                    data: avgTemps,
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                animation: false,
+            }
+        })
 
-    //     return () => {
-    //       chart.destroy()
-    //     }
-    //   }, [data])
+        return () => {
+            chart.destroy()
+        }
+    }, [avgTemps])
 
 
 
@@ -65,20 +67,27 @@ const MainArea = (props) => {
             setLoading(false)
 
             // if (!loading) {
-                const totalTemp = reactorsTemps.reduce((accumulator, temp) => -(-accumulator - temp.amount), 0)
-                const avgTemp = (totalTemp / reactorsTemps.length).toFixed(2)
-                const totalOutputMW = reactorsOutputs.reduce((accumulator, outputData) => accumulator + outputData.output.amount, 0)
-                const totalOutputGW = (totalOutputMW / 1000).toFixed(3)
+            const totalTemp = reactorsTemps.reduce((accumulator, temp) => -(-accumulator - temp.amount), 0)
+            const avgTemp = (totalTemp / reactorsTemps.length).toFixed(2)
+            const totalOutputMW = reactorsOutputs.reduce((accumulator, outputData) => accumulator + outputData.output.amount, 0)
+            const totalOutputGW = (totalOutputMW / 1000).toFixed(3)
 
-                // console.log(true)
-                // const rawCoolant = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`)
-                // const jsonCoolant = await rawCoolant.json()
-                setReactorsInfo({
-                    ...reactorsInfo,
-                    plantName: jsonTitle.plant_name,
-                    avgTemp: avgTemp,
-                    totalOutput: totalOutputGW
-                })
+            // const rawCoolant = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`)
+            // const jsonCoolant = await rawCoolant.json()
+            setReactorsInfo({
+                ...reactorsInfo,
+                plantName: jsonTitle.plant_name,
+                avgTemp: avgTemp,
+                totalOutput: totalOutputGW
+            })
+
+            let newAvgTemps = avgTemps
+            newAvgTemps.push(avgTemp)
+            setAvgTemps(newAvgTemps.slice(-201))
+
+            // if (!edit) {
+            //     console.log("agggagagagag")
+            //     setTempPlantName(reactorsInfo.plantName)
             // }
         }
         getReactorInfo()
@@ -89,11 +98,8 @@ const MainArea = (props) => {
             clearInterval(dataInterval)
         }
 
-    }, [])
+    }, [reactors])
 
-    useEffect(() => {
-        console.log(true)
-    }, [reactorsInfo.avgTemp])
 
     const killAll = async () => {
         await Promise.all(reactors.map(async (reactor) => {
@@ -135,18 +141,24 @@ const MainArea = (props) => {
         // Snack log the result
     }
 
-    const handlePlantNameChange = async (event) => {
-        const { value } = event.target
-        const nameChange = await fetch(`https://nuclear.dacoder.io/reactors/plant-name?apiKey=${apiKey}`, {
-            method: "PUT",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                name: value
+    const handlePlantNameChange = async () => {
+        if (edit) {
+            const nameChange = await fetch(`https://nuclear.dacoder.io/reactors/plant-name?apiKey=${apiKey}`, {
+                method: "PUT",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: tempPlantName
+                })
             })
-        })
+        }
+        setTempPlantName(reactorsInfo.plantName)
+    }
+
+    const updatePlantName = (event) => {
+        setTempPlantName(event.target.value)
     }
 
     // const debouncedChangeHandler = useMemo(
@@ -193,6 +205,7 @@ const MainArea = (props) => {
                         }}>
                             {reactorsInfo.plantName}
                         </Typography>
+
                     )}
                     {edit && (
                         <TextField
@@ -207,8 +220,8 @@ const MainArea = (props) => {
                                 }
                             }}
                             label={reactorsInfo.plantName}
-                            value={reactorsInfo.plantName}
-                            onChange={debounce(handlePlantNameChange, 300)}
+                            value={tempPlantName}
+                            onChange={updatePlantName}
                         />
                     )}
                     <div className="totals-area">
@@ -365,7 +378,10 @@ const MainArea = (props) => {
                                     }
                                 }
                                 ]}
-                                onClick={() => setEdit(prevEdit => !prevEdit)}
+                                onClick={() => {
+                                    setEdit(prevEdit => !prevEdit)
+                                    handlePlantNameChange()
+                                }}
                             >
                                 EDIT
                             </Button>
@@ -378,8 +394,9 @@ const MainArea = (props) => {
                     height: "30vh",
                     width: "40vw",
                     margin: "40px 0 30px",
+                    backgroundColor: "white",
                 }}>
-                    {/* <canvas ref={canvasRef}></canvas> */}
+                    <canvas ref={canvasRef}></canvas>
                 </Box>
             </Box>
         </ThemeProvider>
