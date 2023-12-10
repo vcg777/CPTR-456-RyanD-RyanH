@@ -3,7 +3,7 @@
 
 ## Overview
 
-This project is a nuclear power simulator where the user manages several nuclear reactors.  It was done as part of CPTR 456 during the fall 2023 semester.  
+This project is a nuclear power simulator done in [React](https://react.dev/) where the user manages several nuclear reactors.  It was done as part of CPTR 456 during the fall 2023 semester.
 
 ## Dependencies
 
