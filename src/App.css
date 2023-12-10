@@ -139,10 +139,10 @@ button {
   justify-content: space-evenly;
 }
 
-.Mui-selected {
+/* .Mui-selected {
   background: #0b3954;
   color: #fefffe;
-}
+} */
 
 .temp-data,
 .rods-data {
@@ -161,4 +161,9 @@ div.MuiOutlinedInput-root {
 
 label.MuiFormLabel-root {
   color: #cacaca;
+}
+
+button.MuiToggleButton-root {
+  background: #0b3954;
+  color: #fefffe;
 }
