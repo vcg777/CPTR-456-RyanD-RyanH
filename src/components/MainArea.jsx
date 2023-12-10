@@ -83,7 +83,7 @@ const MainArea = (props) => {
 
             let newAvgTemps = avgTemps
             newAvgTemps.push(avgTemp)
-            setAvgTemps(newAvgTemps.slice(-201))
+            setAvgTemps(newAvgTemps.slice(-601))
 
             // if (!edit) {
             //     console.log("agggagagagag")
@@ -269,17 +269,16 @@ const MainArea = (props) => {
                             >
                                 KILL
                             </Button>
-                            <ToggleButton
-                                value="check"
-                                selected={cooling}
-                                onChange={coolAll}
+                            {/* <Typography variant="Body1">Cooling: </Typography> */}
+                            <Button
+                                onClick={coolAll}
                                 sx={[{
                                     height: "6vh",
                                     borderRadius: "15px",
-                                    width: "150px",
-                                    fontSize: 15,
-                                    backgroundColor: "#bfd7ea",
-                                    color: "#1b1212",
+                                    // width: "75px",
+                                    fontSize: 13,
+                                    backgroundColor: "#0b3954",
+                                    color: "#fefffe",
                                     border: 4,
                                     borderColor: "#a5a5a5",
                                 },
@@ -291,8 +290,8 @@ const MainArea = (props) => {
                                 }
                                 ]}
                             >
-                                COOL
-                            </ToggleButton>
+                                Cool All: {cooling ? "On" : "Off"}
+                            </Button>
                             <Button
                                 variant="contained"
                                 sx={[{
