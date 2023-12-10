@@ -20,6 +20,7 @@ body {
   /* --yellow-hover: #fffb00; */
   --black: #1b1212;
   /* --black-hover: #2d2d2d; */
+  --test: #1f1f1f;
 }
 
 main {
@@ -69,10 +70,15 @@ button {
   gap: 10px;
 }
 
+.temp-and-units {
+  display: flex;
+}
+
 .totals-area {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  align-items: center;
   width: 13vh;
 }
 
@@ -98,6 +104,8 @@ button {
 .reactor-top {
   height: 40vh;
   width: 100vw;
+  display: flex;
+  align-items: center;
 }
 
 .name-area {
@@ -141,4 +149,16 @@ button {
   display: flex;
   width: 35vw;
   justify-content: space-evenly;
+}
+
+fieldset.MuiOutlinedInput-notchedOutline {
+  border-color: #cacaca;
+}
+
+div.MuiOutlinedInput-root {
+  color: rgba(0, 255, 0, 0.87);
+}
+
+label.MuiFormLabel-root {
+  color: #cacaca;
 }

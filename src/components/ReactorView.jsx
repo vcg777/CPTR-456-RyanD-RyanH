@@ -5,6 +5,8 @@ import { TextField, Box, Button, IconButton, Typography, Modal, MenuItem, Toggle
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { EditRounded, LocalGasStationRounded } from '@mui/icons-material';
 import { useEffect } from 'react'
+import SystemLogs from "./SystemLogs"
+
 import standIn from "../images/stand-in.jpg"
 
 const style = {
@@ -34,10 +36,11 @@ export default function ReactorView(props) {
     const [open, setOpen] = useState(false)
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
-    const [selected, setSelected] = useState(false)
     const [reactorInfo, setReactorInfo] = useState({})
     const [tempColor, setTempColor] = useState("")
     const [loading, setLoading] = useState(true)
+    const [logs, setLogs] = useState({})
+    const [seeSysLogs, setSeeSysLogs] = useState(false)
 
 
     useEffect(() => {
@@ -64,6 +67,11 @@ export default function ReactorView(props) {
                 reactorState: jsonReactorState.state,
                 rodState: jsonRodState.control_rods,
             })
+
+            const logsRaw = await fetch(`https://nuclear.dacoder.io/reactors/logs?apiKey=${apiKey}`)
+            const jsonLogs = await logsRaw.json()
+            setLogs(jsonLogs)
+
             setLoading(false)
         }
         getReactorInfo()
@@ -93,7 +101,14 @@ export default function ReactorView(props) {
 
     const changeCoolantState = async () => {
         const changeCoolantState = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${id}?apiKey=${apiKey}`, {
-            method: "POST"
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                coolant: reactorInfo.coolant === "on" ? "off" : "on"
+            })
         })
         // Snack log the result
     }
@@ -134,7 +149,7 @@ export default function ReactorView(props) {
     }
 
     const refuel = async () => {
-        maintenance
+        maintenance()
         const refuel = await fetch(`https://nuclear.dacoder.io/reactors/refuel/${id}?apiKey=${apiKey}`, {
             method: "POST"
         })
@@ -143,24 +158,25 @@ export default function ReactorView(props) {
     }
 
     const changeStatus = (event) => {
-        const { value } = event.target.value
-        if (value === "online") {
-            startReactor
-        } else if (value === "offline") {
-            controlledShutdown
-        } else if (value === "maintenance") {
-            maintenance
+        console.log(event.target)
+        const value = event.target.value
+        if (value === "Active") {
+            startReactor()
+        } else if (value === "Offline") {
+            controlledShutdown()
+        } else if (value === "Maintenance") {
+            maintenance()
         } else {
-            controlledShutdown
+            controlledShutdown()
         }
-
-        console.log(value)
-        setReactorInfo(prevReactorInfo => {
-            return ({
-                ...prevReactorInfo,
-                reactorState: { value }
-            })
-        })
+        // console.log(value)
+        // setReactorInfo(prevReactorInfo => {
+        //     return ({
+        //         ...prevReactorInfo,
+        //         reactorState: value
+        //     })
+        // })
+        // console.log(reactorInfo.reactorState)
     }
 
     const startReactor = async () => {
@@ -169,6 +185,8 @@ export default function ReactorView(props) {
         })
         // Snack log the result
     }
+
+    // console.table(reactorInfo)
 
 
     return (
@@ -227,12 +245,32 @@ export default function ReactorView(props) {
                                     displayEmpty
                                     renderValue={() => reactorInfo.reactorState}
                                 >
-                                    <MenuItem value="online">Online </MenuItem>
-                                    <MenuItem value="offline">Offline</MenuItem>
-                                    <MenuItem value="maintenance">Maintenance</MenuItem>
-                                    <MenuItem value="emergency-shutdown">Dead</MenuItem>
+                                    <MenuItem value="Active">Active </MenuItem>
+                                    <MenuItem value="Offline">Offline</MenuItem>
+                                    <MenuItem value="Maintenance">Maintenance</MenuItem>
                                 </Select>
                             </Box>
+                            <Button sx={[{
+                                height: "65px",
+                                width: "290px",
+                                backgroundColor: "#0b3954",
+                                color: "#fefffe",
+                                borderRadius: "15px",
+                                border: 4,
+                                borderColor: "#a5a5a5",
+                            },
+                            {
+                                '&:hover': {
+                                    backgroundColor: "#16567b"
+                                }
+                            }]}
+                                variant="contained"
+                                onClick={() => {
+                                    setSeeSysLogs(prevSeeSysLogs => !prevSeeSysLogs)
+                                }}
+                            >
+                                SYSTEM LOGS
+                            </Button>
                             <Box sx={{
                                 display: "flex",
                                 flexDirection: "column",
@@ -245,7 +283,7 @@ export default function ReactorView(props) {
                                 <div className='canvas-understudy'></div> {/* This is representing the graph for styling purposes */}
                                 <div className='output-words'>
                                     <Typography variant='h5'>OUTPUT:</Typography>
-                                    <Typography variant='h4'>{reactorInfo.output}</Typography>
+                                    <Typography variant='h4'>{reactorInfo.output.amount}</Typography>
                                     <Typography variant='h5'>MW</Typography>
                                 </div>
 
@@ -264,11 +302,8 @@ export default function ReactorView(props) {
                                 <div className='control-buttons'>
                                     <ToggleButton
                                         value="check"
-                                        selected={selected}
-                                        onChange={() => {
-                                            setSelected(!selected)
-                                            changeCoolantState
-                                        }}
+                                        selected={reactorInfo.coolant === "on"}
+                                        onChange={changeCoolantState}
                                         sx={[{
                                             height: "6vh",
                                             borderRadius: "15px",
@@ -388,7 +423,7 @@ export default function ReactorView(props) {
                                         gap: 3,
                                     }}>
                                         <Typography variant='h5'>Inserted</Typography>
-                                        <Typography variant='h4'>150</Typography>
+                                        <Typography variant='h4'>{reactorInfo.rodState.in}</Typography>
                                         <Button sx={[{
                                             height: "6vh",
                                             width: "7vw",
@@ -415,7 +450,7 @@ export default function ReactorView(props) {
                                         gap: 3,
                                     }}>
                                         <Typography variant='h5'>Removed</Typography>
-                                        <Typography variant='h4'>150</Typography>
+                                        <Typography variant='h4'>{reactorInfo.rodState.out}</Typography>
                                         <Button sx={[{
                                             height: "6vh",
                                             width: "7vw",
@@ -440,6 +475,9 @@ export default function ReactorView(props) {
                             </Box>
                         </div>
                     </Box >
+                    {seeSysLogs && (
+                        <SystemLogs key={id} id={id} logs={logs} />
+                    )}
                     <Modal
                         open={open}
                         onClose={handleClose}

@@ -1,27 +1,27 @@
-import { Box, Button, Typography } from "@mui/material"
+import { Box, Button, TextField, ToggleButton, Typography } from "@mui/material"
 import { Chart } from "chart.js/auto"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import debounce from "lodash.debounce";
+import _ from "lodash";
+
+const theme = createTheme({
+    palette: {
+        info: {
+            main: '#cacaca',
+        },
+    },
+});
+
 
 const MainArea = (props) => {
-    const { reactors, apiKey } = props
+    const { reactors, apiKey, setReactors } = props
     const canvasRef = useRef(null)
     const [pastTemps, setPastTemps] = useState([])
-
-    // useEffect(() => {
-    //     let tempInterval
-
-    //     const getData = async () => {
-    //       const rawTemp = await fetch("http://")
-    //       const jsonTemp = await rawTemp.json()
-    //       setPastTemps(jsonTemp.temperatures_Maybe)
-    //     }
-
-    //     tempInterval = setInterval(getData, 60000)
-
-    //     return () => {
-    //       clearInterval(tempInterval)
-    //     }
-    //   }, [])
+    const [cooling, setCooling] = useState(false)
+    const [edit, setEdit] = useState(false)
+    const [celsius, setCelsius] = useState(true)
+    const [reactorsInfo, setReactorsInfo] = useState({})
 
     // useEffect(() => {
     //     const chart = new Chart(canvasRef.current, {
@@ -44,45 +44,110 @@ const MainArea = (props) => {
     //     }
     //   }, [data])
 
-    const killAll =  () => {
-        const killAll = reactors.map(reactor => {
-            return (
-                async () => {
-                    const messasge = await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${reactor.id}?apiKey=${apiKey}`)
-                }
-            )
-        })
+    useEffect(() => {
+        const getReactorInfo = async () => {
+            const rawTitle = await fetch(`https://nuclear.dacoder.io/reactors?apiKey=${apiKey}`)
+            const jsonTitle = await rawTitle.json()
+
+            const reactorsTemps = await Promise.all(reactors.map(async (reactor) => {
+                const rawTemp = await fetch(`https://nuclear.dacoder.io/reactors/temperature/${reactor.id}?apiKey=${apiKey}`)
+                const jsonTemp = await rawTemp.json()
+                return jsonTemp.temperature
+            }))
+
+            const reactorsOutputs = await Promise.all(reactors.map(async (reactor) => {
+                const rawOutput = await fetch(`https://nuclear.dacoder.io/reactors/output/${reactor.id}?apiKey=${apiKey}`)
+                const jsonOutput = await rawOutput.json()
+                return jsonOutput
+            }))
+
+            const avgTemp = reactorsTemps.reduce((accumulator, temp) => -(-accumulator - temp.amount) / reactorsTemps.length, 0)
+            const totalOutput = reactorsOutputs.reduce((accumulator, temp) => accumulator + temp, 0)
+            // const rawCoolant = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`)
+            // const jsonCoolant = await rawCoolant.json()
+            setReactorsInfo({
+                ...reactorsInfo,
+                plantName: jsonTitle.plant_name,
+                avgTemp: avgTemp,
+                totalOutput: totalOutput
+            })
+            // setCelsius(reactorsTemps[0].unit === "celsius")
+        }
+        getReactorInfo()
+
+        const dataInterval = setInterval(getReactorInfo, 500)
+
+        return () => {
+            clearInterval(dataInterval)
+        }
+
+    }, [])
+
+    const killAll = async () => {
+        await Promise.all(reactors.map(async (reactor) => {
+            await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${reactor.id}?apiKey=${apiKey}`, {
+                method: "POST"
+            })
+        }))
     }
 
-    const coolAll =  () => {
-        const coolAll = reactors.map(reactor => {
-            return (
-                async () => {
-                    const messasge = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`)
-                }
-            )
-        })
+    const coolAll = async () => {
+        await Promise.all(reactors.map(async (reactor) => {
+            await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`, {
+                method: "POST",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    coolant: cooling ? "off" : "on"
+                })
+            })
+        }))
+        setCooling(prevCooling => !prevCooling)
     }
 
-    const sleepAll =  () => {
-        const sleepAll = reactors.map(reactor => {
-            return (
-                async () => {
-                    const messasge = await fetch(`https://nuclear.dacoder.io/reactors/controlled-shutdown/${reactor.id}?apiKey=${apiKey}`)
-                }
-            )
-        })
+    const sleepAll = async () => {
+        await Promise.all(reactors.map(async (reactor) => {
+            await fetch(`https://nuclear.dacoder.io/reactors/controlled-shutdown/${reactor.id}?apiKey=${apiKey}`, {
+                method: "POST"
+            })
+        }))
     }
 
     const reset = async () => {
         const reset = await fetch(`https://nuclear.dacoder.io/reactors/reset?apiKey=${apiKey}`, {
             method: "POST"
         })
+        setReactors([])
         // Snack log the result
     }
 
+    const handlePlantNameChange = async (event) => {
+        const { value } = event.target
+        const nameChange = await fetch(`https://nuclear.dacoder.io/reactors/plant-name?apiKey=${apiKey}`, {
+            method: "PUT",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: value
+            })
+        })
+    }
+
+    // const debouncedChangeHandler = useMemo(
+    //     () => debounce(handlePlantNameChange, 300)
+    //     , [reactorsInfo])
+
+    // useEffect(() => {
+    //     return () => {
+    //         debouncedChangeHandler.cancel();
+    //     }
+    // }, [])
     return (
-        <>
+        <ThemeProvider theme={theme}>
             <Box sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -102,19 +167,41 @@ const MainArea = (props) => {
                 }}>
                     <div className="totals-area">
                         <Typography variant="h6" sx={{ textDecoration: "underline", fontSize: 15 }}>Avg. Temp</Typography>
-                        <Typography variant="h4" sx={{ color: "#bfd7ea", fontSize: 25 }}>25°C</Typography>
+                        <Typography variant="h4" sx={{ color: "#bfd7ea", fontSize: 25 }}>
+                            {reactorsInfo.avgTemp}
+                            {celsius ? "°C" : "K"}
+                        </Typography>
                     </div>
-                    <Typography variant="h6" sx={{
-                        width: "20vw",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center"
-                    }}>
-                        The Power Plant
-                    </Typography>
+                    {!edit && (
+                        <Typography variant="h6" sx={{
+                            width: "20vw",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}>
+                            {reactorsInfo.plantName}
+                        </Typography>
+                    )}
+                    {edit && (
+                        <TextField
+                            style={{
+                                width: "20vw",
+                                borderRadius: "5px",
+                            }}
+                            color="info"
+                            inputProps={{
+                                style: {
+                                    color: "white",
+                                }
+                            }}
+                            label={reactorsInfo.plantName}
+                            value={reactorsInfo.plantName}
+                            onChange={debounce(handlePlantNameChange, 300)}
+                        />
+                    )}
                     <div className="totals-area">
                         <Typography variant="h6" sx={{ textDecoration: "underline", fontSize: 15 }}>Total Output</Typography>
-                        <Typography variant="h4" sx={{ fontSize: 25 }}>1.3 GW</Typography>
+                        <Typography variant="h4" sx={{ fontSize: 25 }}>{reactorsInfo.totalOutput} MW</Typography>
                     </div>
 
                 </Box>
@@ -157,8 +244,10 @@ const MainArea = (props) => {
                             >
                                 KILL
                             </Button>
-                            <Button
-                                variant="contained"
+                            <ToggleButton
+                                value="check"
+                                selected={cooling}
+                                onChange={coolAll}
                                 sx={[{
                                     height: "6vh",
                                     borderRadius: "15px",
@@ -171,14 +260,14 @@ const MainArea = (props) => {
                                 },
                                 {
                                     '&:hover': {
-                                        backgroundColor: "#3b95de"
+                                        backgroundColor: "#0b3954",
+                                        color: "#fefffe",
                                     }
                                 }
                                 ]}
-                                onClick={coolAll}
                             >
                                 COOL
-                            </Button>
+                            </ToggleButton>
                             <Button
                                 variant="contained"
                                 sx={[{
@@ -203,7 +292,7 @@ const MainArea = (props) => {
                             </Button>
                         </div>
                         <div className="main-buttons">
-                            <Button sx={[{
+                            {/* <Button sx={[{
                                 height: "6vh",
                                 width: "150px",
                                 backgroundColor: "#0b3954",
@@ -218,9 +307,12 @@ const MainArea = (props) => {
                                 }
                             }]}
                                 variant="contained"
+                                onClick={() => {
+                                    setSeeSysLogs(prevSeeSysLogs => !prevSeeSysLogs)
+                                }}
                             >
                                 SYSTEM LOGS
-                            </Button>
+                            </Button> */}
                             <Button
                                 variant="contained"
                                 sx={[{
@@ -239,7 +331,7 @@ const MainArea = (props) => {
                                     }
                                 }
                                 ]}
-                            onClick={reset}
+                                onClick={reset}
                             >
                                 RESET
                             </Button>
@@ -250,17 +342,18 @@ const MainArea = (props) => {
                                     borderRadius: "15px",
                                     width: "150px",
                                     fontSize: 15,
-                                    backgroundColor: "info.main",
+                                    backgroundColor: "#29b6f6",
                                     color: "#1b1212",
                                     border: 4,
                                     borderColor: "#a5a5a5",
                                 },
                                 {
                                     '&:hover': {
-                                        backgroundColor: "info.light"
+                                        backgroundColor: "#4fc3f7"
                                     }
                                 }
                                 ]}
+                                onClick={() => setEdit(prevEdit => !prevEdit)}
                             >
                                 EDIT
                             </Button>
@@ -277,7 +370,7 @@ const MainArea = (props) => {
                     {/* <canvas ref={canvasRef}></canvas> */}
                 </Box>
             </Box>
-        </>
+        </ThemeProvider>
     )
 }
 
