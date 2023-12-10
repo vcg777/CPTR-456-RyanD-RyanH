@@ -1,11 +1,13 @@
 import * as React from 'react'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { TextField, Box, Button, IconButton, Typography, Modal, MenuItem, ToggleButton, Select } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { EditRounded, LocalGasStationRounded } from '@mui/icons-material';
 import { useEffect } from 'react'
 import SystemLogs from "./SystemLogs"
+import { Chart } from "chart.js/auto"
+
 
 import standIn from "../images/stand-in.jpg"
 
@@ -41,6 +43,8 @@ export default function ReactorView(props) {
     const [loading, setLoading] = useState(true)
     const [logs, setLogs] = useState({})
     const [seeSysLogs, setSeeSysLogs] = useState(false)
+    const canvasRef = useRef(null)
+    const [outputData, setOutputData] = useState([])
 
 
     useEffect(() => {
@@ -67,6 +71,9 @@ export default function ReactorView(props) {
                 reactorState: jsonReactorState.state,
                 rodState: jsonRodState.control_rods,
             })
+            let newData = outputData
+            newData.push(jsonTemp.temperature.amount)
+            setOutputData(newData.slice(-201))
 
             const logsRaw = await fetch(`https://nuclear.dacoder.io/reactors/logs?apiKey=${apiKey}`)
             const jsonLogs = await logsRaw.json()
@@ -84,6 +91,28 @@ export default function ReactorView(props) {
         }
 
     }, [])
+
+
+    useEffect(() => {
+        const chart = new Chart(canvasRef.current, {
+            type: "line",
+            data: {
+                labels: outputData.map((datum, index) => index),
+                datasets: [{
+                    label: "Number",
+                    data: outputData,
+                    borderWidth: 2,
+                },]
+            },
+            options: {
+                animation: false,
+            }
+        })
+
+        return () => {
+            chart.destroy()
+        }
+    }, [reactorInfo])
 
     // useEffect(() => {
     //     setTempColor(() => {
@@ -280,7 +309,9 @@ export default function ReactorView(props) {
                                 height: "40vh",
                             }}>
                                 {/* <canvas ref={canvasRef}></canvas> */}
-                                <div className='canvas-understudy'></div> {/* This is representing the graph for styling purposes */}
+                                <div className='canvas-understudy'>
+                                    <canvas ref={canvasRef}></canvas>
+                                </div> {/* This is representing the graph for styling purposes */}
                                 <div className='output-words'>
                                     <Typography variant='h5'>OUTPUT:</Typography>
                                     <Typography variant='h4'>{reactorInfo.output.amount.toFixed(2)}</Typography>
