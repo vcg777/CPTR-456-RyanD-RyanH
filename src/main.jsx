@@ -11,7 +11,7 @@ const downsApiKey = "41379ac7c513012b"
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "left", vertical: "bottom"}} autoHideDuration={5000}>
+    <SnackbarProvider maxSnack={4} anchorOrigin={{ horizontal: "left", vertical: "bottom"}} autoHideDuration={5000}>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<App apiKey={howellApiKey} />} />

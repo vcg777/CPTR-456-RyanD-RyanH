@@ -3,6 +3,7 @@ import { Chart } from "chart.js/auto"
 import { useState, useRef, useEffect, useMemo } from "react"
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import debounce from "lodash.debounce";
+import { useSnackbar } from "notistack";
 
 const theme = createTheme({
     palette: {
@@ -24,6 +25,11 @@ const MainArea = (props) => {
     const [loading, setLoading] = useState(true)
     const [avgTemps, setAvgTemps] = useState([]) //Stores the average temps for the chart
     const [tempPlantName, setTempPlantName] = useState("")
+    const { enqueueSnackbar } = useSnackbar()
+
+    const addMessage = () => {
+        enqueueSnackbar("This is a good message", { variant: "success" })
+    }
 
     useEffect(() => {
         const chart = new Chart(canvasRef.current, {
@@ -103,15 +109,16 @@ const MainArea = (props) => {
 
     const killAll = async () => {
         await Promise.all(reactors.map(async (reactor) => {
-            await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${reactor.id}?apiKey=${apiKey}`, {
+            const killMessage = await fetch(`https://nuclear.dacoder.io/reactors/emergency-shutdown/${reactor.id}?apiKey=${apiKey}`, {
                 method: "POST"
             })
+            killMessage.status === 400 ? enqueueSnackbar(killMessage.message, { variant: "error" }) : enqueueSnackbar(`${reactor.name} died a tragic death`, { variant: "success" })
         }))
     }
 
     const coolAll = async () => {
-        const coolAll = await Promise.all(reactors.map(async (reactor) => {
-            await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`, {
+        await Promise.all(reactors.map(async (reactor) => {
+            const coolMessage = await fetch(`https://nuclear.dacoder.io/reactors/coolant/${reactor.id}?apiKey=${apiKey}`, {
                 method: "POST",
                 headers: {
                     Accept: "application/json",
@@ -121,24 +128,26 @@ const MainArea = (props) => {
                     coolant: cooling ? "off" : "on"
                 })
             })
+            coolMessage.status === 400 ? enqueueSnackbar(coolMessage.message, { variant: "error" }) : enqueueSnackbar(`${reactor.name} is ${!cooling ? "chilling out" : "fired up"}`, { variant: "success" })
         }))
         setCooling(prevCooling => !prevCooling)
     }
 
     const sleepAll = async () => {
         await Promise.all(reactors.map(async (reactor) => {
-            await fetch(`https://nuclear.dacoder.io/reactors/controlled-shutdown/${reactor.id}?apiKey=${apiKey}`, {
+            const sleepMessage = await fetch(`https://nuclear.dacoder.io/reactors/controlled-shutdown/${reactor.id}?apiKey=${apiKey}`, {
                 method: "POST"
             })
+            sleepMessage.status === 400 ? enqueueSnackbar(sleepMessage.message, { variant: "error" }) : enqueueSnackbar(`${reactor.name} is out to lunch`, { variant: "success" })
         }))
     }
 
     const reset = async () => {
-        const reset = await fetch(`https://nuclear.dacoder.io/reactors/reset?apiKey=${apiKey}`, {
+        const resetMessage = await fetch(`https://nuclear.dacoder.io/reactors/reset?apiKey=${apiKey}`, {
             method: "POST"
         })
         setReactors([])
-        // Snack log the result
+        resetMessage.status === 400 ? enqueueSnackbar(resetMessage.message, { variant: "error" }) : enqueueSnackbar("Have another go", { variant: "success" })
     }
 
     const handlePlantNameChange = async () => {
@@ -389,8 +398,6 @@ const MainArea = (props) => {
                     </Box>
                 </Box>
                 <Box sx={{
-                    border: 1,
-                    borderColor: "red",
                     height: "30vh",
                     width: "40vw",
                     margin: "40px 0 30px",

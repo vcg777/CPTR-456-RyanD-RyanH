@@ -8,7 +8,7 @@ import { useSnackbar } from 'notistack'
 function App(props) {
   const { apiKey } = props
   const [reactors, setReactors] = useState([])
-  // const { enqueueSnackbar } = useSnackbar()
+  const { enqueueSnackbar } = useSnackbar()
 
 
   // const addMessage = () => {
@@ -64,8 +64,6 @@ function App(props) {
       {reactors.map(reactor => {
         return <ReactorDisplay key={reactor.id} id={reactor.id} apiKey={apiKey} />
       })}
-
-      
     </main>
   )
 }

@@ -35,9 +35,6 @@ const theme = createTheme({
 export default function ReactorView(props) {
     const { apiKey } = props
     const { id } = useParams()
-    const [open, setOpen] = useState(false)
-    const handleOpen = () => setOpen(true)
-    const handleClose = () => setOpen(false)
     const [reactorInfo, setReactorInfo] = useState({})
     const [tempColor, setTempColor] = useState("")
     const [loading, setLoading] = useState(true)
@@ -45,6 +42,8 @@ export default function ReactorView(props) {
     const [seeSysLogs, setSeeSysLogs] = useState(false)
     const canvasRef = useRef(null)
     const [outputData, setOutputData] = useState([])
+    const [edit, setEdit] = useState(false)
+    const [tempReactorName, setTempReactorName] = useState("New Name")
 
 
     useEffect(() => {
@@ -62,8 +61,14 @@ export default function ReactorView(props) {
             const jsonFuelLevel = await rawFuelLevel.json()
             const jsonReactorState = await rawReactorState.json()
             const jsonRodState = await rawRodState.json()
+
+            const rawNames = await fetch(`https://nuclear.dacoder.io/reactors?apiKey=${apiKey}`)
+            const jsonNames = await rawNames.json()
+            const reactorName = jsonNames.reactors.map(reactor => reactor).filter((value) => value.id === id)[0].name
+
             setReactorInfo({
                 ...reactorInfo,
+                name: reactorName,
                 temperature: jsonTemp.temperature,
                 coolant: jsonCoolant.coolant,
                 output: jsonOutput.output,
@@ -214,8 +219,21 @@ export default function ReactorView(props) {
         // Snack log the result
     }
 
-    // console.table(reactorInfo)
-
+    const handleReactorNameChange = async () => {
+        if (edit) {
+            const nameChange = await fetch(`https://nuclear.dacoder.io/reactors/set-reactor-name/${id}?apiKey=${apiKey}`, {
+                method: "PUT",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: tempReactorName
+                })
+            })
+        }
+        setTempReactorName(reactorInfo.reactorName)
+    }
 
     return (
         <>
@@ -241,9 +259,25 @@ export default function ReactorView(props) {
                                 height: "40vh",
                             }}>
                                 <div className='name-area'>
-                                    <Typography variant='h5' sx={{ padding: 1 }}>Name</Typography>
+                                    <div className='spacer'></div>
+                                    {!edit && <Typography variant='h5' sx={{ padding: 1 }}>{reactorInfo.name}</Typography>}
+                                    {edit && <TextField
+                                        color="info"
+                                        inputProps={{
+                                            style: {
+                                                color: "white",
+                                            }
+                                        }}
+                                        label={reactorInfo.name}
+                                        value={tempReactorName}
+                                        onChange={() => setTempReactorName(event.target.value)}
+                                    />
+                                    }
                                     <IconButton
-                                        onClick={() => handleOpen()}
+                                        onClick={() => {
+                                            setEdit(prevEdit => !prevEdit)
+                                            handleReactorNameChange()
+                                        }}
                                         sx={[{
                                             height: "4vh",
                                             borderRadius: "11px",
@@ -505,20 +539,12 @@ export default function ReactorView(props) {
                             </Box>
                         </div>
                     </Box >
-                    {seeSysLogs && (
-                        <SystemLogs key={id} id={id} logs={logs} />
-                    )}
-                    <Modal
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                    >
-                        <Box sx={style}>
-                            <p>This will have an input where you can change the name</p>
-                        </Box>
-                    </Modal>
-                </ThemeProvider>
+        { seeSysLogs && (
+            <SystemLogs key={id} id={id} logs={logs} />
+        )
+}
+
+                </ThemeProvider >
             )
             }
         </>

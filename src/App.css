@@ -108,6 +108,10 @@ button {
   align-items: center;
 }
 
+.spacer {
+  width: 3vw;
+}
+
 .name-area {
   display: flex;
   width: 23vw;
@@ -153,10 +157,6 @@ button {
 
 fieldset.MuiOutlinedInput-notchedOutline {
   border-color: #cacaca;
-}
-
-div.MuiOutlinedInput-root {
-  color: rgba(0, 255, 0, 0.87);
 }
 
 label.MuiFormLabel-root {
